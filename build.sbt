@@ -8,7 +8,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "tamc"
 
-ThisBuild / scalaVersion := "3.6.2"
+ThisBuild / scalaVersion := "3.6.4"
 ThisBuild / majorVersion := 4
 ThisBuild / scalacOptions ++= Seq(
   "-feature",

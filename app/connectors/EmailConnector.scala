@@ -23,7 +23,6 @@ import play.api.http.Status.*
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.*
 import uk.gov.hmrc.http.HttpReads.Implicits.*
-import uk.gov.hmrc.http.HttpReadsInstances.readEitherOf
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpReads, HttpResponse, StringContextOps, UpstreamErrorResponse}
 
