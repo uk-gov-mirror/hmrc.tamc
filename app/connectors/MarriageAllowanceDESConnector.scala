@@ -180,10 +180,13 @@ class MarriageAllowanceDESConnector @Inject()(val metrics: TamcMetrics,
       .post(path)
       .withBody(Json.toJson(createRelationshipRequest))
       .setHeader(explicitHeaders*)
-      .execute[Either[UpstreamErrorResponse, HttpResponse]]
-      .map {
-        case Right(response) => Right(response.json)
-        case Left(error) => Left(error)
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK => Right(response.json)
+          case _ => Left(UpstreamErrorResponse(response.body, response.status))
+        }
+
       }
       .recover {
         case error: HttpException => Left(UpstreamErrorResponse(error.message, BAD_GATEWAY))
