@@ -35,14 +35,11 @@ import cats.instances.future._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class PertaxAuthActionSpec
-  extends UnitSpec
-    with GuiceOneAppPerSuite {
+class PertaxAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite {
 
   class Harness(
-                 pertaxAuthAction: PertaxAuthAction
-               )
-    extends InjectedController {
+    pertaxAuthAction: PertaxAuthAction
+  ) extends InjectedController {
     def onPageLoad(): Action[AnyContent] =
       pertaxAuthAction { _ =>
         Ok("")
@@ -51,7 +48,7 @@ class PertaxAuthActionSpec
 
   private val pertaxConnector: PertaxConnector =
     mock[PertaxConnector]
-  private val cc: ControllerComponents =
+  private val cc: ControllerComponents         =
     stubControllerComponents()
 
   override implicit lazy val app: Application =
@@ -71,7 +68,7 @@ class PertaxAuthActionSpec
           new PertaxAuthAction(pertaxConnector, cc)
         val controller =
           new Harness(authAction)
-        val result =
+        val result     =
           controller.onPageLoad()(FakeRequest())
 
         status(result) shouldBe OK
@@ -88,7 +85,7 @@ class PertaxAuthActionSpec
           new PertaxAuthAction(pertaxConnector, cc)
         val controller =
           new Harness(authAction)
-        val result =
+        val result     =
           controller.onPageLoad()(FakeRequest())
 
         status(result) shouldBe UNAUTHORIZED
@@ -104,7 +101,7 @@ class PertaxAuthActionSpec
           new PertaxAuthAction(pertaxConnector, cc)
         val controller =
           new Harness(authAction)
-        val result =
+        val result     =
           controller.onPageLoad()(FakeRequest())
 
         status(result) shouldBe UNAUTHORIZED
@@ -120,14 +117,14 @@ class PertaxAuthActionSpec
           new PertaxAuthAction(pertaxConnector, cc)
         val controller =
           new Harness(authAction)
-        val result =
+        val result     =
           controller.onPageLoad()(FakeRequest())
 
         status(result) shouldBe BAD_GATEWAY
       }
     }
 
-    "return internal server error"  when {
+    "return internal server error" when {
       "response is other UpstreamErrorResponse" in {
         when(pertaxConnector.authorise(any(), any()))
           .thenReturn(EitherT.leftT(UpstreamErrorResponse("ERROR_CODE", IM_A_TEAPOT)))
@@ -136,7 +133,7 @@ class PertaxAuthActionSpec
           new PertaxAuthAction(pertaxConnector, cc)
         val controller =
           new Harness(authAction)
-        val result =
+        val result     =
           controller.onPageLoad()(FakeRequest())
 
         status(result) shouldBe INTERNAL_SERVER_ERROR

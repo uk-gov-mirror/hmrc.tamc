@@ -22,35 +22,38 @@ import com.google.inject.Inject
 import models.ApiType
 import models.ApiType.ApiType
 
-class TamcMetrics @Inject()(registry: MetricRegistry) {
+class TamcMetrics @Inject() (registry: MetricRegistry) {
 
   val timers: Map[models.ApiType.Value, Timer] = Map(
-    ApiType.FindCitizen -> registry.timer("find-citizen-response-timer"),
-    ApiType.FindRecipient -> registry.timer("find-recipient-response-timer"),
-    ApiType.CheckRelationship -> registry.timer("check-relationship-response-timer"),
+    ApiType.FindCitizen        -> registry.timer("find-citizen-response-timer"),
+    ApiType.FindRecipient      -> registry.timer("find-recipient-response-timer"),
+    ApiType.CheckRelationship  -> registry.timer("check-relationship-response-timer"),
     ApiType.CreateRelationship -> registry.timer("create-relationship-response-timer"),
-    ApiType.ListRelationship -> registry.timer("list-relationship-response-timer"),
-    ApiType.UpdateRelationship -> registry.timer("update-relationship-response-timer"))
+    ApiType.ListRelationship   -> registry.timer("list-relationship-response-timer"),
+    ApiType.UpdateRelationship -> registry.timer("update-relationship-response-timer")
+  )
 
   val successCounters: Map[models.ApiType.Value, Counter] = Map(
-    ApiType.FindCitizen -> registry.counter("find-citizen-success"),
-    ApiType.FindRecipient -> registry.counter("find-recipient-success"),
-    ApiType.CheckRelationship -> registry.counter("check-relationship-success"),
+    ApiType.FindCitizen        -> registry.counter("find-citizen-success"),
+    ApiType.FindRecipient      -> registry.counter("find-recipient-success"),
+    ApiType.CheckRelationship  -> registry.counter("check-relationship-success"),
     ApiType.CreateRelationship -> registry.counter("create-relationship-success"),
-    ApiType.ListRelationship -> registry.counter("list-relationship-success"),
-    ApiType.UpdateRelationship -> registry.counter("update-relationship-success"))
+    ApiType.ListRelationship   -> registry.counter("list-relationship-success"),
+    ApiType.UpdateRelationship -> registry.counter("update-relationship-success")
+  )
 
   val totalCounters: Map[models.ApiType.Value, Counter] = Map(
-    ApiType.FindCitizen -> registry.counter("find-citizen-total"),
-    ApiType.FindRecipient -> registry.counter("find-recipient-total"),
-    ApiType.CheckRelationship -> registry.counter("check-relationship-total"),
+    ApiType.FindCitizen        -> registry.counter("find-citizen-total"),
+    ApiType.FindRecipient      -> registry.counter("find-recipient-total"),
+    ApiType.CheckRelationship  -> registry.counter("check-relationship-total"),
     ApiType.CreateRelationship -> registry.counter("create-relationship-total"),
-    ApiType.ListRelationship -> registry.counter("list-relationship-total"),
-    ApiType.UpdateRelationship -> registry.counter("update-relationship-total"))
+    ApiType.ListRelationship   -> registry.counter("list-relationship-total"),
+    ApiType.UpdateRelationship -> registry.counter("update-relationship-total")
+  )
 
   val failureCounters: Map[models.ApiType.Value, Counter] = Map(
-    ApiType.FindRecipient -> registry.counter("find-recipient-failure"))
-
+    ApiType.FindRecipient -> registry.counter("find-recipient-failure")
+  )
 
   def startTimer(api: ApiType): Context = timers(api).time()
 

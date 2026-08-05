@@ -22,4 +22,7 @@ object UpdateRelationshipRequestHolder {
   implicit val formats: OFormat[UpdateRelationshipRequestHolder] = Json.format[UpdateRelationshipRequestHolder]
 }
 
-case class UpdateRelationshipRequestHolder(request: DesUpdateRelationshipRequest, notification: UpdateRelationshipNotificationRequest)
+case class UpdateRelationshipRequestHolder(
+  request: DesUpdateRelationshipRequest,
+  notification: UpdateRelationshipNotificationRequest
+)

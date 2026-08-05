@@ -31,10 +31,10 @@ class PertaxAuthAction @Inject() (
   pertaxConnector: PertaxConnector,
   cc: ControllerComponents
 ) extends ActionFilter[Request]
-  with ActionBuilder[Request, AnyContent]
-  with Results
-  with I18nSupport
-  with Logging {
+    with ActionBuilder[Request, AnyContent]
+    with Results
+    with I18nSupport
+    with Logging {
 
   override def messagesApi: MessagesApi = cc.messagesApi
 
@@ -65,4 +65,3 @@ class PertaxAuthAction @Inject() (
 
   override def parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
 }
-	

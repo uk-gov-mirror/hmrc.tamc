@@ -21,10 +21,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsResultException, JsString}
 import test_utils.{EmailAddressGenerators, UnitSpec}
 
-class EmailAddressSpec
-  extends UnitSpec
-    with ScalaCheckPropertyChecks
-    with EmailAddressGenerators {
+class EmailAddressSpec extends UnitSpec with ScalaCheckPropertyChecks with EmailAddressGenerators {
 
   "Creating an EmailAddress class" should {
     "work for a valid email" in {
@@ -80,7 +77,7 @@ class EmailAddressSpec
     "have a local part" in forAll(validMailbox, validDomain) { (mailbox, domain) =>
       val exampleAddr = EmailAddress(s"$mailbox@$domain")
       exampleAddr.mailbox should (be(a[Mailbox]) and have(Symbol("value")(mailbox)))
-      exampleAddr.domain should (be(a[Domain]) and have(Symbol("value")(domain)))
+      exampleAddr.domain  should (be(a[Domain]) and have(Symbol("value")(domain)))
     }
 
     "return false when .isValid is called with an invalid email address" in {
@@ -117,10 +114,11 @@ class EmailAddressSpec
       exampleA.domain should equal(exampleB.domain)
     }
 
-    "not compare equal if completely different" in forAll(validMailbox, validDomain, validDomain) { (mailbox, domainA, domainB) =>
-      val exampleA = EmailAddress(s"$mailbox@$domainA")
-      val exampleB = EmailAddress(s"$mailbox@$domainB")
-      exampleA.domain should not equal exampleB.domain
+    "not compare equal if completely different" in forAll(validMailbox, validDomain, validDomain) {
+      (mailbox, domainA, domainB) =>
+        val exampleA = EmailAddress(s"$mailbox@$domainA")
+        val exampleB = EmailAddress(s"$mailbox@$domainB")
+        exampleA.domain should not equal exampleB.domain
     }
 
     "toString to a String of the domain" in {
@@ -145,10 +143,11 @@ class EmailAddressSpec
       exampleA.mailbox should equal(exampleB.mailbox)
     }
 
-    "not compare equal if completely different" in forAll(validDomain, validMailbox, validMailbox) { (domain, mailboxA, mailboxB) =>
-      val exampleA = EmailAddress(s"$mailboxA@$domain")
-      val exampleB = EmailAddress(s"$mailboxB@$domain")
-      exampleA.mailbox should not equal exampleB.mailbox
+    "not compare equal if completely different" in forAll(validDomain, validMailbox, validMailbox) {
+      (domain, mailboxA, mailboxB) =>
+        val exampleA = EmailAddress(s"$mailboxA@$domain")
+        val exampleB = EmailAddress(s"$mailboxB@$domain")
+        exampleA.mailbox should not equal exampleB.mailbox
     }
 
     "toString to a String of the domain" in {

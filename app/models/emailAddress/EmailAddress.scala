@@ -31,25 +31,27 @@ case class EmailAddress(value: String) extends StringValue {
 
 object EmailAddress {
   implicit val emailAddressReads: Reads[EmailAddress] =
-    (js: JsValue) => js.validate[String].flatMap {
-      case s if EmailAddress.isValid(s) =>
-        JsSuccess(EmailAddress(s))
-      case _                            =>
-        JsError("not a valid email address")
-    }
+    (js: JsValue) =>
+      js.validate[String].flatMap {
+        case s if EmailAddress.isValid(s) =>
+          JsSuccess(EmailAddress(s))
+        case _                            =>
+          JsError("not a valid email address")
+      }
 
   implicit val emailAddressWrites: Writes[EmailAddress] =
     (e: EmailAddress) => JsString(e.value)
 
   final private[EmailAddress] val validDomain = """^([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)$""".r
-  final private[EmailAddress] val validEmail = """^([a-zA-Z0-9.!#$%&’'*+/=?^_`{|}~-]+)@([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)$""".r
+  final private[EmailAddress] val validEmail  =
+    """^([a-zA-Z0-9.!#$%&’'*+/=?^_`{|}~-]+)@([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)$""".r
 
   def isValid(email: String): Boolean = email match {
-    case validEmail(_,_) => true
-    case _               => false
+    case validEmail(_, _) => true
+    case _                => false
   }
 
-  case class Mailbox private[EmailAddress](value: String) extends StringValue
+  case class Mailbox private[EmailAddress] (value: String) extends StringValue
 
   case class Domain(value: String) extends StringValue {
     value match {

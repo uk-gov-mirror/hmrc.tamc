@@ -43,26 +43,26 @@ import java.util.Calendar
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionException, Future}
 
-class MarriageAllowanceServiceSpec
-  extends UnitSpec
-    with GuiceOneAppPerSuite
-    with Injecting {
+class MarriageAllowanceServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Injecting {
 
-  val year: Int = TaxYear.current.startYear
-  val generatedNino: Nino = new Generator().nextNino
-  val cID = 123456789
-  val findRecipientRequest: FindRecipientRequest = FindRecipientRequest(name = "testForename1", lastName = "testLastName",
-    gender = Gender("M"), nino = generatedNino, dateOfMarriage = Some(LocalDate.of(year, 12, 12)))
-  val userRecord: UserRecord = UserRecord(cid = cID, timestamp = "20200116155359011123")
-
+  val year: Int                                  = TaxYear.current.startYear
+  val generatedNino: Nino                        = new Generator().nextNino
+  val cID                                        = 123456789
+  val findRecipientRequest: FindRecipientRequest = FindRecipientRequest(
+    name = "testForename1",
+    lastName = "testLastName",
+    gender = Gender("M"),
+    nino = generatedNino,
+    dateOfMarriage = Some(LocalDate.of(year, 12, 12))
+  )
+  val userRecord: UserRecord                     = UserRecord(cid = cID, timestamp = "20200116155359011123")
 
   val mockMarriageAllowanceDESConnector: MarriageAllowanceDESConnector = mock[MarriageAllowanceDESConnector]
-  val mockTamcMetrics: TamcMetrics = mock[TamcMetrics]
-  val mockEmailConnector: EmailConnector = mock[EmailConnector]
-  val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
+  val mockTamcMetrics: TamcMetrics                                     = mock[TamcMetrics]
+  val mockEmailConnector: EmailConnector                               = mock[EmailConnector]
+  val mockAppConfig: ApplicationConfig                                 = mock[ApplicationConfig]
 
-  val findCitizenJson: JsValue = Json.parse(
-    s"""
+  val findCitizenJson: JsValue = Json.parse(s"""
 
   {"Jtpr1311PerDetailsFindcallResponse": {"Jtpr1311PerDetailsFindExport": {
     "@exitStateType": "3",
@@ -135,9 +135,7 @@ class MarriageAllowanceServiceSpec
   }
   }}}""")
 
-  val listRelationshipdJson: JsValue = Json.parse(
-
-    """{
+  val listRelationshipdJson: JsValue = Json.parse("""{
     "relationships": [
     {
       "participant": 1,
@@ -178,7 +176,8 @@ class MarriageAllowanceServiceSpec
       bind[TamcMetrics].toInstance(mockTamcMetrics),
       bind[EmailConnector].toInstance(mockEmailConnector),
       bind[ApplicationConfig].toInstance(mockAppConfig)
-    ).build()
+    )
+    .build()
 
   def setAppConFigValuesInMock(): Unit = {
     when(mockAppConfig.ROLE_TRANSFEROR).thenReturn("Transferor")
@@ -196,7 +195,6 @@ class MarriageAllowanceServiceSpec
   }
 
   def service: MarriageAllowanceService = inject[MarriageAllowanceService]
-
 
   "getRecipientRelationship" should {
     "return a UserRecord, list of TaxYearModel tuple given a valid FindRecipientRequest " in {
@@ -224,7 +222,6 @@ class MarriageAllowanceServiceSpec
       result shouldBe Right(expectedResponse)
     }
 
-
     "return a DataRetrievalError error type based on error returned" in {
       when(mockMarriageAllowanceDESConnector.findRecipient(meq(findRecipientRequest))(any(), any()))
         .thenReturn(Future.successful(Left(TooManyRequestsError)))
@@ -242,8 +239,12 @@ class MarriageAllowanceServiceSpec
           Future.successful(Right(()))
         )
 
-        val multiYearCreateRelationshipRequest = MultiYearCreateRelationshipRequestHolderFixture.multiYearCreateRelationshipRequestNoTaxYearHolder
-        val response = service.createMultiYearRelationship(multiYearCreateRelationshipRequest, "GDS")(new HeaderCarrier(), implicitly)
+        val multiYearCreateRelationshipRequest =
+          MultiYearCreateRelationshipRequestHolderFixture.multiYearCreateRelationshipRequestNoTaxYearHolder
+        val response                           = service.createMultiYearRelationship(multiYearCreateRelationshipRequest, "GDS")(
+          new HeaderCarrier(),
+          implicitly
+        )
 
         await(response) shouldBe a[Unit]
       }
@@ -251,11 +252,15 @@ class MarriageAllowanceServiceSpec
 
     "when request is sent with deceased recipient in MarriageAllowanceService" should {
       "return a BadRequestException" in {
-        when(mockMarriageAllowanceDESConnector.sendMultiYearCreateRelationshipRequest(any(), any())(any(), any())).
-          thenReturn(Future.failed(new BadRequestException("{\"reason\": \"Participant is deceased\"}")))
+        when(mockMarriageAllowanceDESConnector.sendMultiYearCreateRelationshipRequest(any(), any())(any(), any()))
+          .thenReturn(Future.failed(new BadRequestException("{\"reason\": \"Participant is deceased\"}")))
 
-        val multiYearCreateRelationshipRequest = MultiYearCreateRelationshipRequestHolderFixture.multiYearCreateRelationshipRequestHolder
-        val response = service.createMultiYearRelationship(multiYearCreateRelationshipRequest, "GDS")(new HeaderCarrier(), implicitly)
+        val multiYearCreateRelationshipRequest =
+          MultiYearCreateRelationshipRequestHolderFixture.multiYearCreateRelationshipRequestHolder
+        val response                           = service.createMultiYearRelationship(multiYearCreateRelationshipRequest, "GDS")(
+          new HeaderCarrier(),
+          implicitly
+        )
 
         intercept[BadRequestException] {
           await(response)
@@ -269,22 +274,25 @@ class MarriageAllowanceServiceSpec
         when(mockTamcMetrics.startTimer(any())).thenReturn(mockTimerContext)
         when(mockTimerContext.stop()).thenReturn(123456789L)
 
-        val jsVal: JsValue = Json.parse(
-          """ {
+        val jsVal: JsValue = Json.parse(""" {
             |"status":"Processing OK",
             |"CID1Timestamp": "123456789",
             |"CID2Timestamp": "123456789" }
           """.stripMargin)
 
-        val resultVal: Future[Either[UpstreamErrorResponse,JsValue]] = Future.successful(Right(jsVal))
+        val resultVal: Future[Either[UpstreamErrorResponse, JsValue]] = Future.successful(Right(jsVal))
 
-        when(mockMarriageAllowanceDESConnector.sendMultiYearCreateRelationshipRequest(any(), any())(any(), any())).
-          thenReturn(resultVal)
+        when(mockMarriageAllowanceDESConnector.sendMultiYearCreateRelationshipRequest(any(), any())(any(), any()))
+          .thenReturn(resultVal)
 
         when(mockEmailConnector.sendEmail(any())(any(), any())).thenReturn(Future.successful(Right(())))
 
-        val multiYearCreateRelationshipRequest = MultiYearCreateRelationshipRequestHolderFixture.multiYearCreateRelationshipCurrentYearHolder
-        val response = service.createMultiYearRelationship(multiYearCreateRelationshipRequest, "GDS")(new HeaderCarrier(), implicitly)
+        val multiYearCreateRelationshipRequest =
+          MultiYearCreateRelationshipRequestHolderFixture.multiYearCreateRelationshipCurrentYearHolder
+        val response                           = service.createMultiYearRelationship(multiYearCreateRelationshipRequest, "GDS")(
+          new HeaderCarrier(),
+          implicitly
+        )
 
         await(response) shouldBe a[Unit]
       }
@@ -293,23 +301,24 @@ class MarriageAllowanceServiceSpec
   }
 
   "when updateRelationship" should {
-    List( ("Rejected by Recipient", "Recipient", true, false, true),
+    List(
+      ("Rejected by Recipient", "Recipient", true, false, true),
       ("Rejected by Recipient", "Recipient", false, false, true),
       ("Rejected by Recipient", "Recipient", false, true, true),
       ("Divorce/Separation", "Transferor", false, false, true),
       ("Divorce/Separation", "Transferor", false, false, false),
       ("Divorce/Separation", "Recipient", false, false, true),
       ("Divorce/Separation", "Recipient", false, false, false),
-      ("Cancelled by Transferor", "Transferor", false, false, true)).foreach {
-      case (reason, role, welsh, retrospective, current) =>
-        s"updating for $reason $role ${if (welsh) "Welsh" else "English"} ${if (retrospective) "retrospectively" else ""} " +
-            s"${if (current) "Current" else "Previous"} tax year" in {
+      ("Cancelled by Transferor", "Transferor", false, false, true)
+    ).foreach { case (reason, role, welsh, retrospective, current) =>
+      s"updating for $reason $role ${if (welsh) "Welsh" else "English"} ${if (retrospective) "retrospectively" else ""} " +
+        s"${if (current) "Current" else "Previous"} tax year" in {
           setAppConFigValuesInMock()
           val mockTimerContext = mock[Timer.Context]
           when(mockTamcMetrics.startTimer(any())).thenReturn(mockTimerContext)
           when(mockTimerContext.stop()).thenReturn(123456789L)
 
-          val sdf = new SimpleDateFormat("yyyyMMdd")
+          val sdf     = new SimpleDateFormat("yyyyMMdd")
           val theDate = Calendar.getInstance()
           if (!current) theDate.add(Calendar.YEAR, -1)
           val endDate = sdf.format(theDate.getTime)
@@ -317,15 +326,22 @@ class MarriageAllowanceServiceSpec
           val desUpdateRelationshipRequest: DesUpdateRelationshipRequest = DesUpdateRelationshipRequest(
             new DesRecipientInformation("participant1", theDate.toString),
             new DesTransferorInformation("participant2"),
-            new DesRelationshipInformation(theDate.toString, reason, endDate))
+            new DesRelationshipInformation(theDate.toString, reason, endDate)
+          )
 
-          val notification: UpdateRelationshipNotificationRequest = new UpdateRelationshipNotificationRequest("Fred Bloggs",
-              new EmailAddress("fred@bloggs.com"), role, welsh, retrospective)
+          val notification: UpdateRelationshipNotificationRequest = new UpdateRelationshipNotificationRequest(
+            "Fred Bloggs",
+            new EmailAddress("fred@bloggs.com"),
+            role,
+            welsh,
+            retrospective
+          )
 
-          val updateRelationshipRequestHolder: UpdateRelationshipRequestHolder = new UpdateRelationshipRequestHolder(desUpdateRelationshipRequest, notification)
+          val updateRelationshipRequestHolder: UpdateRelationshipRequestHolder =
+            new UpdateRelationshipRequestHolder(desUpdateRelationshipRequest, notification)
 
-          when(mockMarriageAllowanceDESConnector.updateAllowanceRelationship(any())(any(), any())).
-            thenReturn(Future.successful(Right(())))
+          when(mockMarriageAllowanceDESConnector.updateAllowanceRelationship(any())(any(), any()))
+            .thenReturn(Future.successful(Right(())))
 
           when(mockEmailConnector.sendEmail(any())(any(), any())).thenReturn(Future.successful(Right(())))
 
@@ -337,39 +353,45 @@ class MarriageAllowanceServiceSpec
 
   "when updateRelationship with invalid role" should {
     "return a NotImplementedError" in {
-        setAppConFigValuesInMock()
-        val mockTimerContext = mock[Timer.Context]
-        when(mockTamcMetrics.startTimer(any())).thenReturn(mockTimerContext)
-        when(mockTimerContext.stop()).thenReturn(123456789L)
+      setAppConFigValuesInMock()
+      val mockTimerContext = mock[Timer.Context]
+      when(mockTamcMetrics.startTimer(any())).thenReturn(mockTimerContext)
+      when(mockTimerContext.stop()).thenReturn(123456789L)
 
-        val sdf = new SimpleDateFormat("yyyyMMdd")
-        val theDate = Calendar.getInstance()
-        val endDate = sdf.format(theDate.getTime)
+      val sdf     = new SimpleDateFormat("yyyyMMdd")
+      val theDate = Calendar.getInstance()
+      val endDate = sdf.format(theDate.getTime)
 
-        val desUpdateRelationshipRequest: DesUpdateRelationshipRequest = DesUpdateRelationshipRequest(
-          new DesRecipientInformation("participant1", theDate.toString),
-          new DesTransferorInformation("participant2"),
-          new DesRelationshipInformation(theDate.toString,  "Divorce/Separation", endDate))
+      val desUpdateRelationshipRequest: DesUpdateRelationshipRequest = DesUpdateRelationshipRequest(
+        new DesRecipientInformation("participant1", theDate.toString),
+        new DesTransferorInformation("participant2"),
+        new DesRelationshipInformation(theDate.toString, "Divorce/Separation", endDate)
+      )
 
-        val notification: UpdateRelationshipNotificationRequest = new UpdateRelationshipNotificationRequest("Fred Bloggs",
-          new EmailAddress("fred@bloggs.com"), "INVALID", false, false)
+      val notification: UpdateRelationshipNotificationRequest = new UpdateRelationshipNotificationRequest(
+        "Fred Bloggs",
+        new EmailAddress("fred@bloggs.com"),
+        "INVALID",
+        false,
+        false
+      )
 
-        val updateRelationshipRequestHolder: UpdateRelationshipRequestHolder = new UpdateRelationshipRequestHolder(desUpdateRelationshipRequest, notification)
+      val updateRelationshipRequestHolder: UpdateRelationshipRequestHolder =
+        new UpdateRelationshipRequestHolder(desUpdateRelationshipRequest, notification)
 
-        when(mockMarriageAllowanceDESConnector.updateAllowanceRelationship(any())(any(), any())).
-          thenReturn(Future.successful(Right(())))
+      when(mockMarriageAllowanceDESConnector.updateAllowanceRelationship(any())(any(), any()))
+        .thenReturn(Future.successful(Right(())))
 
-        when(mockEmailConnector.sendEmail(any())(any(), any())).thenReturn(Future.successful(Right(())))
+      when(mockEmailConnector.sendEmail(any())(any(), any())).thenReturn(Future.successful(Right(())))
 
-        val response = service.updateRelationship(updateRelationshipRequestHolder)(new HeaderCarrier(), implicitly)
+      val response = service.updateRelationship(updateRelationshipRequestHolder)(new HeaderCarrier(), implicitly)
 
-        val exceptionThrown: ExecutionException = intercept[ExecutionException] {
-          await(response)
-        }
-        exceptionThrown.getCause.getMessage == "reason and role not handled: Divorce/Separation, INVALID"
+      val exceptionThrown: ExecutionException = intercept[ExecutionException] {
+        await(response)
       }
+      exceptionThrown.getCause.getMessage == "reason and role not handled: Divorce/Separation, INVALID"
+    }
   }
-
 
   "when getting relationship list" should {
     "return RelationshipRecordWrapper" when {
@@ -393,5 +415,3 @@ class MarriageAllowanceServiceSpec
   }
 
 }
-
-

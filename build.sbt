@@ -1,15 +1,15 @@
 import sbt.*
 import sbt.Keys.*
 import uk.gov.hmrc.DefaultBuildSettings.*
-import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
-import uk.gov.hmrc.versioning.SbtGitVersioning
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "tamc"
 
 ThisBuild / scalaVersion := "3.6.4"
 ThisBuild / majorVersion := 4
+ThisBuild / scalafmtOnCompile := true
+
 ThisBuild / scalacOptions ++= Seq(
   "-feature",
   "-Xfatal-warnings",

@@ -25,43 +25,52 @@ object MultiYearCreateRelationshipRequestHolderFixture {
 
   val multiYearCreateRelationshipRequest: MultiYearCreateRelationshipRequest = MultiYearCreateRelationshipRequest(
     transferor_cid = 1111.asInstanceOf[Cid],
-    transferor_timestamp="2222",
-    recipient_cid=3333.asInstanceOf[Cid],
-    recipient_timestamp="4444",
-    taxYears=List(2015,2016)
-  )
-
-  val multiYearCreateRelationshipRequestNoTaxYear: MultiYearCreateRelationshipRequest = MultiYearCreateRelationshipRequest(
-    transferor_cid = 1111.asInstanceOf[Cid],
-    transferor_timestamp="2222",
-    recipient_cid=3333.asInstanceOf[Cid],
-    recipient_timestamp="4444",
-    taxYears=List()
-  )
-
-  def getCurrentYear: Int ={
-    Calendar.getInstance().get(Calendar.YEAR);
-  }
-
-  val multiYearCreateRelationshipCurrentYearRequest: MultiYearCreateRelationshipRequest = MultiYearCreateRelationshipRequest(
-    transferor_cid = 1111.asInstanceOf[Cid],
     transferor_timestamp = "2222",
     recipient_cid = 3333.asInstanceOf[Cid],
     recipient_timestamp = "4444",
-    taxYears = List(getCurrentYear)
+    taxYears = List(2015, 2016)
   )
 
+  val multiYearCreateRelationshipRequestNoTaxYear: MultiYearCreateRelationshipRequest =
+    MultiYearCreateRelationshipRequest(
+      transferor_cid = 1111.asInstanceOf[Cid],
+      transferor_timestamp = "2222",
+      recipient_cid = 3333.asInstanceOf[Cid],
+      recipient_timestamp = "4444",
+      taxYears = List()
+    )
 
-  val createRelationshipNotificationRequest: CreateRelationshipNotificationRequest = CreateRelationshipNotificationRequest(
-      full_name="bob",
-      email=EmailAddress("bob@yahoo.com"),
-      welsh=false
-  )
+  def getCurrentYear: Int =
+    Calendar.getInstance().get(Calendar.YEAR);
 
+  val multiYearCreateRelationshipCurrentYearRequest: MultiYearCreateRelationshipRequest =
+    MultiYearCreateRelationshipRequest(
+      transferor_cid = 1111.asInstanceOf[Cid],
+      transferor_timestamp = "2222",
+      recipient_cid = 3333.asInstanceOf[Cid],
+      recipient_timestamp = "4444",
+      taxYears = List(getCurrentYear)
+    )
 
-  val multiYearCreateRelationshipRequestHolder: MultiYearCreateRelationshipRequestHolder = MultiYearCreateRelationshipRequestHolder(multiYearCreateRelationshipRequest, createRelationshipNotificationRequest)
+  val createRelationshipNotificationRequest: CreateRelationshipNotificationRequest =
+    CreateRelationshipNotificationRequest(
+      full_name = "bob",
+      email = EmailAddress("bob@yahoo.com"),
+      welsh = false
+    )
 
-  val multiYearCreateRelationshipRequestNoTaxYearHolder: MultiYearCreateRelationshipRequestHolder = MultiYearCreateRelationshipRequestHolder(multiYearCreateRelationshipRequestNoTaxYear, createRelationshipNotificationRequest)
+  val multiYearCreateRelationshipRequestHolder: MultiYearCreateRelationshipRequestHolder =
+    MultiYearCreateRelationshipRequestHolder(multiYearCreateRelationshipRequest, createRelationshipNotificationRequest)
 
-  val multiYearCreateRelationshipCurrentYearHolder: MultiYearCreateRelationshipRequestHolder = MultiYearCreateRelationshipRequestHolder(multiYearCreateRelationshipCurrentYearRequest, createRelationshipNotificationRequest)
+  val multiYearCreateRelationshipRequestNoTaxYearHolder: MultiYearCreateRelationshipRequestHolder =
+    MultiYearCreateRelationshipRequestHolder(
+      multiYearCreateRelationshipRequestNoTaxYear,
+      createRelationshipNotificationRequest
+    )
+
+  val multiYearCreateRelationshipCurrentYearHolder: MultiYearCreateRelationshipRequestHolder =
+    MultiYearCreateRelationshipRequestHolder(
+      multiYearCreateRelationshipCurrentYearRequest,
+      createRelationshipNotificationRequest
+    )
 }

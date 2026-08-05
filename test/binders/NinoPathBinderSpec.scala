@@ -21,11 +21,7 @@ import org.scalatest.{EitherValues, OptionValues}
 import test_utils.UnitSpec
 import uk.gov.hmrc.domain.Nino
 
-class NinoPathBinderSpec
-  extends UnitSpec
-    with Matchers
-    with OptionValues
-    with EitherValues {
+class NinoPathBinderSpec extends UnitSpec with Matchers with OptionValues with EitherValues {
 
   private val pathBindable = NinoPathBinder.pathBindable
 

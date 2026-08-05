@@ -22,4 +22,8 @@ object GetRelationshipResponse {
   implicit val formats: OFormat[GetRelationshipResponse] = Json.format[GetRelationshipResponse]
 }
 
-case class GetRelationshipResponse(user_record: Option[UserRecord] = None, availableYears: Option[List[TaxYear]] = None, status: ResponseStatus)
+case class GetRelationshipResponse(
+  user_record: Option[UserRecord] = None,
+  availableYears: Option[List[TaxYear]] = None,
+  status: ResponseStatus
+)
