@@ -40,8 +40,7 @@ object MultiYearCreateRelationshipRequestHolderFixture {
       taxYears = List()
     )
 
-  def getCurrentYear: Int =
-    Calendar.getInstance().get(Calendar.YEAR);
+  def getCurrentYear: Int = Calendar.getInstance().get(Calendar.YEAR);
 
   val multiYearCreateRelationshipCurrentYearRequest: MultiYearCreateRelationshipRequest =
     MultiYearCreateRelationshipRequest(

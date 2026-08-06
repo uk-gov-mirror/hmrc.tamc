@@ -46,17 +46,12 @@ class PertaxAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite {
       }
   }
 
-  private val pertaxConnector: PertaxConnector =
-    mock[PertaxConnector]
-  private val cc: ControllerComponents         =
-    stubControllerComponents()
+  private val pertaxConnector: PertaxConnector = mock[PertaxConnector]
+  private val cc: ControllerComponents         = stubControllerComponents()
 
-  override implicit lazy val app: Application =
-    new GuiceApplicationBuilder()
-      .overrides(
-        bind[PertaxConnector].toInstance(pertaxConnector)
-      )
-      .build()
+  override implicit lazy val app: Application = new GuiceApplicationBuilder()
+    .overrides(bind[PertaxConnector].toInstance(pertaxConnector))
+    .build()
 
   "PertaxAuthAction" should {
     "return OK" when {
@@ -81,12 +76,9 @@ class PertaxAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite {
         when(pertaxConnector.authorise(any(), any()))
           .thenReturn(EitherT.rightT(PertaxAuthResponse("ERROR_CODE", "")))
 
-        val authAction =
-          new PertaxAuthAction(pertaxConnector, cc)
-        val controller =
-          new Harness(authAction)
-        val result     =
-          controller.onPageLoad()(FakeRequest())
+        val authAction = new PertaxAuthAction(pertaxConnector, cc)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) shouldBe UNAUTHORIZED
       }
@@ -97,12 +89,9 @@ class PertaxAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite {
         when(pertaxConnector.authorise(any(), any()))
           .thenReturn(EitherT.leftT(UpstreamErrorResponse("Unauthorized", UNAUTHORIZED)))
 
-        val authAction =
-          new PertaxAuthAction(pertaxConnector, cc)
-        val controller =
-          new Harness(authAction)
-        val result     =
-          controller.onPageLoad()(FakeRequest())
+        val authAction = new PertaxAuthAction(pertaxConnector, cc)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) shouldBe UNAUTHORIZED
       }
@@ -113,12 +102,9 @@ class PertaxAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite {
         when(pertaxConnector.authorise(any(), any()))
           .thenReturn(EitherT.leftT(UpstreamErrorResponse("Server error", INTERNAL_SERVER_ERROR)))
 
-        val authAction =
-          new PertaxAuthAction(pertaxConnector, cc)
-        val controller =
-          new Harness(authAction)
-        val result     =
-          controller.onPageLoad()(FakeRequest())
+        val authAction = new PertaxAuthAction(pertaxConnector, cc)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) shouldBe BAD_GATEWAY
       }
@@ -129,12 +115,9 @@ class PertaxAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite {
         when(pertaxConnector.authorise(any(), any()))
           .thenReturn(EitherT.leftT(UpstreamErrorResponse("ERROR_CODE", IM_A_TEAPOT)))
 
-        val authAction =
-          new PertaxAuthAction(pertaxConnector, cc)
-        val controller =
-          new Harness(authAction)
-        val result     =
-          controller.onPageLoad()(FakeRequest())
+        val authAction = new PertaxAuthAction(pertaxConnector, cc)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }

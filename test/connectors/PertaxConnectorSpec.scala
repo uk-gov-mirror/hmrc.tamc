@@ -40,21 +40,14 @@ class PertaxConnectorSpec
 
   wireMockServer.start()
 
-  override implicit lazy val app: Application =
-    new GuiceApplicationBuilder()
-      .configure(
-        "microservice.services.pertax.port" -> wireMockServer.port()
-      )
-      .build()
+  override implicit lazy val app: Application = new GuiceApplicationBuilder()
+    .configure("microservice.services.pertax.port" -> wireMockServer.port())
+    .build()
 
-  lazy val pertaxConnector: PertaxConnector =
-    app.injector.instanceOf[PertaxConnector]
-  implicit lazy val ec: ExecutionContext    =
-    app.injector.instanceOf[ExecutionContext]
-  implicit val hc: HeaderCarrier            =
-    HeaderCarrier()
-  private val authoriseUrl: String          =
-    s"/pertax/authorise"
+  lazy val pertaxConnector: PertaxConnector = app.injector.instanceOf[PertaxConnector]
+  implicit lazy val ec: ExecutionContext    = app.injector.instanceOf[ExecutionContext]
+  implicit val hc: HeaderCarrier            = HeaderCarrier()
+  private val authoriseUrl: String          = s"/pertax/authorise"
 
   "PertaxAuthConnector" should {
     "return a PertaxAuthResponse with ACCESS_GRANTED code" in {
@@ -71,9 +64,7 @@ class PertaxConnectorSpec
         )
       )
 
-      val result =
-        pertaxConnector.authorise.value.futureValue
-          .getOrElse(PertaxAuthResponse("INCORRECT", "INCORRECT"))
+      val result = pertaxConnector.authorise.value.futureValue.getOrElse(PertaxAuthResponse("INCORRECT", "INCORRECT"))
 
       result shouldBe PertaxAuthResponse("ACCESS_GRANTED", "Access granted")
     }
@@ -93,9 +84,7 @@ class PertaxConnectorSpec
         )
       )
 
-      val result =
-        pertaxConnector.authorise.value.futureValue
-          .getOrElse(PertaxAuthResponse("INCORRECT", "INCORRECT"))
+      val result = pertaxConnector.authorise.value.futureValue.getOrElse(PertaxAuthResponse("INCORRECT", "INCORRECT"))
 
       result shouldBe PertaxAuthResponse("NO_HMRC_PT_ENROLMENT", "There is no valid HMRC PT enrolment")
     }
@@ -116,9 +105,7 @@ class PertaxConnectorSpec
         )
       )
 
-      val result =
-        pertaxConnector.authorise.value.futureValue
-          .getOrElse(PertaxAuthResponse("INCORRECT", "INCORRECT"))
+      val result = pertaxConnector.authorise.value.futureValue.getOrElse(PertaxAuthResponse("INCORRECT", "INCORRECT"))
 
       result shouldBe PertaxAuthResponse("INVALID_AFFINITY", "The user is neither an individual or an organisation")
     }
@@ -139,9 +126,7 @@ class PertaxConnectorSpec
         )
       )
 
-      val result =
-        pertaxConnector.authorise.value.futureValue
-          .getOrElse(PertaxAuthResponse("INCORRECT", "INCORRECT"))
+      val result = pertaxConnector.authorise.value.futureValue.getOrElse(PertaxAuthResponse("INCORRECT", "INCORRECT"))
 
       result shouldBe PertaxAuthResponse("MCI_RECORD", "Manual correspondence indicator is set")
     }
@@ -159,9 +144,8 @@ class PertaxConnectorSpec
           )
         )
 
-        val result =
-          pertaxConnector.authorise.value.futureValue.swap
-            .getOrElse(UpstreamErrorResponse("INCORRECT", UNPROCESSABLE_ENTITY))
+        val result = pertaxConnector.authorise.value.futureValue.swap
+          .getOrElse(UpstreamErrorResponse("INCORRECT", UNPROCESSABLE_ENTITY))
 
         result.statusCode shouldBe error
       }

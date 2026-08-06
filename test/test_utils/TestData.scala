@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,21 @@ import models.*
 import uk.gov.hmrc.domain.NinoGenerator
 
 import java.net.URLDecoder
+import scala.util.Random
 
 object TestData {
 
+  private def generateUnique[T](count: Int)(next: => T): List[T] =
+    Iterator
+      .continually(next)
+      .distinct
+      .take(count + 1)
+      .toList
+
   object Cids {
     private lazy val cids = {
-      val randomizer     = new java.util.Random
-      var cids: Set[Cid] = Set()
-      while (cids.size <= 11)
-        cids += randomizer.nextLong().abs
-      cids.toList
+      val randomizer = new Random
+      generateUnique(11)(randomizer.nextLong().abs)
     }
 
     val cidOkP1: Cid               = cids(0)
@@ -47,11 +52,8 @@ object TestData {
 
   object Ninos {
     private lazy val ninos = {
-      val randomizer         = NinoGenerator()
-      var ninos: Set[String] = Set()
-      while (ninos.size <= 15)
-        ninos += randomizer.nextNino.nino
-      ninos.toList
+      val randomizer = NinoGenerator()
+      generateUnique(15)(randomizer.nextNino.nino)
     }
 
     val ninoP1A: String                = ninos(0)
@@ -73,7 +75,7 @@ object TestData {
   }
 
   case class ListItem(partner: FindCitizenDummy, participant: Int, endReason: Option[String] = None) {
-    def json = endReason match {
+    def json: String = endReason match {
       case Some(reason) => ended(reason)
       case None         => ongoing
     }
