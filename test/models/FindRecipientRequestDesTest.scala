@@ -17,7 +17,7 @@
 package models
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.domain.{Generator, Nino}
+import uk.gov.hmrc.domain.{Nino, NinoGenerator}
 import test_utils.UnitSpec
 
 class FindRecipientRequestDesTest extends UnitSpec {
@@ -26,7 +26,7 @@ class FindRecipientRequestDesTest extends UnitSpec {
   val lastName            = "testLastName"
   val genderMale          = "M"
   val gender: Gender      = Gender(genderMale)
-  val generatedNino: Nino = new Generator().nextNino
+  val generatedNino: Nino = NinoGenerator().nextNino
 
   val findRecipientRequest: FindRecipientRequest = FindRecipientRequest(name, lastName, gender, generatedNino)
 

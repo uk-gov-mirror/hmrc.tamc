@@ -21,8 +21,7 @@ import play.api.libs.json.{JsString, Json}
 
 trait MarriageAllowanceFixtures {
 
-  def getRecipientRelationshipResponse(cid: Cid, reasonCode: Int = 1, returnCode: Int = 1) = Json.parse(
-    s"""{
+  def getRecipientRelationshipResponse(cid: Cid, reasonCode: Int = 1, returnCode: Int = 1) = Json.parse(s"""{
           "Jfwk1012FindCheckPerNoninocallResponse": {
             "Jfwk1012FindCheckPerNoninoExport": {
               "@exitStateType": "0",
@@ -45,12 +44,12 @@ trait MarriageAllowanceFixtures {
       }""")
 
   val successPertaxAuthResponse = Json.obj(
-    "code" -> JsString("ACCESS_GRANTED"),
-            "message" -> JsString("Some message")
+    "code"    -> JsString("ACCESS_GRANTED"),
+    "message" -> JsString("Some message")
   )
 
-  def findCitizenResponse(cid: Cid, deceasedSignal: String = "N", returnCode: Int = 1, reasonCode: Int = 1) = Json.parse(
-  s"""{
+  def findCitizenResponse(cid: Cid, deceasedSignal: String = "N", returnCode: Int = 1, reasonCode: Int = 1) =
+    Json.parse(s"""{
         "Jtpr1311PerDetailsFindcallResponse":{
             "Jtpr1311PerDetailsFindExport":{
                 "OutItpr1Person":{
@@ -68,8 +67,7 @@ trait MarriageAllowanceFixtures {
         }
     }""")
 
-  val listRelationshipResponse = Json.parse(
-    """
+  val listRelationshipResponse = Json.parse("""
       |{
       |  "relationships": [
       |  {
@@ -270,8 +268,7 @@ trait MarriageAllowanceFixtures {
       |
       |""".stripMargin)
 
-  val createMultiYearRelationshipResponse = Json.parse(
-    """
+  val createMultiYearRelationshipResponse = Json.parse("""
       |{
       |  "CID1": "999059794",
       |  "CID1Timestamp": "2021",

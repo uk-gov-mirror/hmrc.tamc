@@ -32,7 +32,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.{JsValue, Json}
 import play.api.{Application, inject}
 import test_utils.UnitSpec
-import uk.gov.hmrc.domain.{Generator, Nino}
+import uk.gov.hmrc.domain.{Nino, NinoGenerator}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.test.WireMockSupport
@@ -71,7 +71,7 @@ class MarriageAllowanceDESConnectorSpec extends UnitSpec with GuiceOneAppPerSuit
 
   lazy val connector: MarriageAllowanceDESConnector = app.injector.instanceOf[MarriageAllowanceDESConnector]
 
-  val generatedNino: Nino = new Generator().nextNino
+  val generatedNino: Nino = NinoGenerator().nextNino
   val url                 = s"/marriage-allowance/citizen/${generatedNino.nino}/check"
 
   def findRecipientRequest(nino: Nino = generatedNino): FindRecipientRequest =

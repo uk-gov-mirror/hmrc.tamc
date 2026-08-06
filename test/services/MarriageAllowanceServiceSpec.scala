@@ -33,7 +33,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Injecting
 import test_utils.UnitSpec
-import uk.gov.hmrc.domain.{Generator, Nino}
+import uk.gov.hmrc.domain.{Nino, NinoGenerator}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.time.TaxYear
 
@@ -46,7 +46,7 @@ import scala.concurrent.{ExecutionException, Future}
 class MarriageAllowanceServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Injecting {
 
   val year: Int                                  = TaxYear.current.startYear
-  val generatedNino: Nino                        = new Generator().nextNino
+  val generatedNino: Nino                        = NinoGenerator().nextNino
   val cID                                        = 123456789
   val findRecipientRequest: FindRecipientRequest = FindRecipientRequest(
     name = "testForename1",

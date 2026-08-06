@@ -16,10 +16,10 @@
 
 package test_utils
 
-import models._
-import java.net.URLDecoder
+import models.*
+import uk.gov.hmrc.domain.NinoGenerator
 
-import uk.gov.hmrc.domain.Generator
+import java.net.URLDecoder
 
 object TestData {
 
@@ -47,7 +47,7 @@ object TestData {
 
   object Ninos {
     private lazy val ninos = {
-      val randomizer         = new Generator()
+      val randomizer         = NinoGenerator()
       var ninos: Set[String] = Set()
       while (ninos.size <= 15)
         ninos += randomizer.nextNino.nino

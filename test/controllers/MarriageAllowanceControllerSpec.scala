@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import play.api.test.Helpers.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, contentAsJso
 import play.api.test.{FakeHeaders, FakeRequest}
 import services.MarriageAllowanceService
 import test_utils.*
-import uk.gov.hmrc.domain.{Generator, Nino}
+import uk.gov.hmrc.domain.{Nino, NinoGenerator}
 import uk.gov.hmrc.http.BadRequestException
 
 import scala.concurrent.Future
@@ -51,10 +51,10 @@ class MarriageAllowanceControllerSpec extends UnitSpec with GuiceOneAppPerSuite 
     )
     .build()
 
-  lazy val controller = app.injector.instanceOf[MarriageAllowanceController]
+  lazy val controller: MarriageAllowanceController = app.injector.instanceOf[MarriageAllowanceController]
 
   trait Setup {
-    val generatedNino: Nino                        = new Generator().nextNino
+    val generatedNino: Nino                        = new NinoGenerator().nextNino
     val findRecipientRequest: FindRecipientRequest =
       FindRecipientRequest(name = "testName", lastName = "lastName", gender = Gender("M"), generatedNino)
     val json: JsValue                              = Json.toJson(findRecipientRequest)

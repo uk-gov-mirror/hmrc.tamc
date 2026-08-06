@@ -32,7 +32,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.MarriageAllowanceService
 import test_utils.{FakePertaxAuthAction, TestData, UnitSpec}
-import uk.gov.hmrc.domain.{Generator, Nino}
+import uk.gov.hmrc.domain.{Nino, NinoGenerator}
 import uk.gov.hmrc.http.{BadRequestException, NotFoundException, UpstreamErrorResponse}
 
 import scala.concurrent.Future
@@ -56,7 +56,7 @@ class ErrorSpec extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEac
     reset(mockMarriageAllowanceService)
   }
 
-  val generatedNino = new Generator().nextNino.nino
+  val generatedNino: String = NinoGenerator().nextNino.nino
 
   "Checking user record" should {
 

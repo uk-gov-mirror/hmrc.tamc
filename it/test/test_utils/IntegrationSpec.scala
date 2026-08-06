@@ -23,7 +23,13 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import uk.gov.hmrc.http.test.WireMockSupport
 
-trait IntegrationSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with WireMockSupport with ScalaFutures {
+trait IntegrationSpec
+    extends AnyWordSpec
+    with Matchers
+    with GuiceOneAppPerSuite
+    with WireMockSupport
+    with ScalaFutures {
 
-  implicit override val patienceConfig: PatienceConfig = PatienceConfig(scaled(Span(5, Seconds)), scaled(Span(100, Millis)))
+  implicit override val patienceConfig: PatienceConfig =
+    PatienceConfig(scaled(Span(5, Seconds)), scaled(Span(100, Millis)))
 }
