@@ -21,9 +21,9 @@ import test_utils.UnitSpec
 
 class FindRecipientResponseDESTest extends UnitSpec {
 
-  val reasonCode = 1
-  val returnCode = 1
-  val instanceIdentifier: Cid = 123456789
+  val reasonCode                 = 1
+  val returnCode                 = 1
+  val instanceIdentifier: Cid    = 123456789
   val updateTimestamp: Timestamp = "20200116155359011123"
 
   val expectedJson = Json.parse(s"""{
@@ -47,7 +47,6 @@ class FindRecipientResponseDESTest extends UnitSpec {
             }
           }
       }""")
-
 
   "FindRecipientResponseDES" should {
 

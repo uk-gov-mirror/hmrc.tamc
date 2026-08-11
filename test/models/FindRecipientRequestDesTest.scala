@@ -17,17 +17,16 @@
 package models
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.domain.{Generator, Nino}
+import uk.gov.hmrc.domain.{Nino, NinoGenerator}
 import test_utils.UnitSpec
 
 class FindRecipientRequestDesTest extends UnitSpec {
 
-  val name = "testName"
-  val lastName = "testLastName"
-  val genderMale = "M"
-  val gender: Gender = Gender(genderMale)
-  val generatedNino: Nino = new Generator().nextNino
-
+  val name                = "testName"
+  val lastName            = "testLastName"
+  val genderMale          = "M"
+  val gender: Gender      = Gender(genderMale)
+  val generatedNino: Nino = NinoGenerator().nextNino
 
   val findRecipientRequest: FindRecipientRequest = FindRecipientRequest(name, lastName, gender, generatedNino)
 
@@ -42,7 +41,8 @@ class FindRecipientRequestDesTest extends UnitSpec {
   "FindRecipientRequestDes" should {
 
     "return a FindRecipientRequestDes given an instance of FindRecipientRequest" in {
-      val expectedResult = FindRecipientRequestDes(surname = lastName, forename1 = name, forename2 = None, gender = Some(genderMale))
+      val expectedResult =
+        FindRecipientRequestDes(surname = lastName, forename1 = name, forename2 = None, gender = Some(genderMale))
 
       FindRecipientRequestDes(findRecipientRequest) shouldBe expectedResult
     }

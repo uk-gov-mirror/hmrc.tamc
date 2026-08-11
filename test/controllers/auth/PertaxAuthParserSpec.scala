@@ -28,7 +28,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class PertaxAuthParserSpec
-  extends UnitSpec
+    extends UnitSpec
     with ScalaFutures
     with IntegrationPatience
     with EitherValues
@@ -37,9 +37,11 @@ class PertaxAuthParserSpec
   "PertaxAuthParser" should {
     "return right PertaxAuthResponse" in {
       val request: Future[Either[UpstreamErrorResponse, HttpResponse]] =
-        Future.successful(Right(
-          HttpResponse(OK, Json.prettyPrint(Json.obj("code" -> "ACCESS_GRANTED", "message" -> "Access granted")))
-        ))
+        Future.successful(
+          Right(
+            HttpResponse(OK, Json.prettyPrint(Json.obj("code" -> "ACCESS_GRANTED", "message" -> "Access granted")))
+          )
+        )
 
       val parser: PertaxAuthParser =
         new PertaxAuthParser()(global)
@@ -47,11 +49,10 @@ class PertaxAuthParserSpec
       val result: EitherT[Future, UpstreamErrorResponse, PertaxAuthResponse] =
         parser(request)
 
-      whenReady(result.value) {
-        res =>
-          res.value shouldBe a[PertaxAuthResponse]
-          res.value.code shouldBe "ACCESS_GRANTED"
-          res.value.message shouldBe "Access granted"
+      whenReady(result.value) { res =>
+        res.value         shouldBe a[PertaxAuthResponse]
+        res.value.code    shouldBe "ACCESS_GRANTED"
+        res.value.message shouldBe "Access granted"
       }
     }
 
@@ -72,11 +73,10 @@ class PertaxAuthParserSpec
         val result: EitherT[Future, UpstreamErrorResponse, PertaxAuthResponse] =
           parser(request)
 
-        whenReady(result.value) {
-          res =>
-            res.left.value shouldBe a[UpstreamErrorResponse]
-            res.left.value.statusCode shouldBe error
-            res.left.value.message shouldBe "broke"
+        whenReady(result.value) { res =>
+          res.left.value            shouldBe a[UpstreamErrorResponse]
+          res.left.value.statusCode shouldBe error
+          res.left.value.message    shouldBe "broke"
         }
       }
 
@@ -86,18 +86,15 @@ class PertaxAuthParserSpec
       val request: Future[Either[UpstreamErrorResponse, HttpResponse]] =
         Future.failed(new HttpException("broke", INTERNAL_SERVER_ERROR))
 
-      val parser: PertaxAuthParser =
-        new PertaxAuthParser()(global)
+      val parser: PertaxAuthParser = new PertaxAuthParser()(global)
 
-      val result: EitherT[Future, UpstreamErrorResponse, PertaxAuthResponse] =
-        parser(request)
+      val result: EitherT[Future, UpstreamErrorResponse, PertaxAuthResponse] = parser(request)
 
-      whenReady(result.value) {
-        res =>
-          res.left.value shouldBe a[UpstreamErrorResponse]
-          res.left.value.statusCode shouldBe BAD_GATEWAY
-          res.left.value.reportAs shouldBe BAD_GATEWAY
-          res.left.value.message shouldBe "broke"
+      whenReady(result.value) { res =>
+        res.left.value            shouldBe a[UpstreamErrorResponse]
+        res.left.value.statusCode shouldBe BAD_GATEWAY
+        res.left.value.reportAs   shouldBe BAD_GATEWAY
+        res.left.value.message    shouldBe "broke"
       }
     }
 
@@ -105,11 +102,9 @@ class PertaxAuthParserSpec
       val request: Future[Either[UpstreamErrorResponse, HttpResponse]] =
         Future.failed(new Exception("broke"))
 
-      val parser: PertaxAuthParser =
-        new PertaxAuthParser()(global)
+      val parser: PertaxAuthParser = new PertaxAuthParser()(global)
 
-      val result: EitherT[Future, UpstreamErrorResponse, PertaxAuthResponse] =
-        parser(request)
+      val result: EitherT[Future, UpstreamErrorResponse, PertaxAuthResponse] = parser(request)
 
       intercept[Exception] {
         await(result.value)

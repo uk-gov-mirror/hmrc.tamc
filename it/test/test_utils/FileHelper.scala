@@ -25,9 +25,8 @@ object FileHelper {
     try {
       source = Source.fromFile(name)
       source.mkString
-    } finally {
-      if(source != null)
+    } finally
+      if (source != null)
         source.close()
-    }
   }
 }

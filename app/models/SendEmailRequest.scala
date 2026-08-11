@@ -24,11 +24,10 @@ case class SendEmailRequest(to: List[EmailAddress], templateId: String, paramete
 
 object SendEmailRequest {
   implicit val format: Format[SendEmailRequest] = new Format[SendEmailRequest] {
-    def reads(json: JsValue): JsResult[SendEmailRequest] = (
-      (__ \ "to").read[List[EmailAddress]] and
-        (__ \ "templateId").read[String] and
-        (__ \ "parameters").read[Map[String, String]] and
-        (__ \ "force").readNullable[Boolean].map(_.getOrElse(false))) (SendEmailRequest.apply).reads(json)
+    def reads(json: JsValue): JsResult[SendEmailRequest] = ((__ \ "to").read[List[EmailAddress]] and
+      (__ \ "templateId").read[String] and
+      (__ \ "parameters").read[Map[String, String]] and
+      (__ \ "force").readNullable[Boolean].map(_.getOrElse(false)))(SendEmailRequest.apply).reads(json)
 
     def writes(o: SendEmailRequest): JsValue = Json.writes[SendEmailRequest].writes(o)
   }

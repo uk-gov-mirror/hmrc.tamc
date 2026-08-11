@@ -47,18 +47,15 @@ class MultiYearSpec extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfte
 
   val mockMarrageAllowanceService: MarriageAllowanceService = mock[MarriageAllowanceService]
 
-
-  override def fakeApplication(): Application = {
+  override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .overrides(
         bind[MarriageAllowanceService].toInstance(mockMarrageAllowanceService),
         bind[PertaxAuthAction].to[FakePertaxAuthAction]
       )
       .build()
-  }
 
   val controller: MarriageAllowanceController = app.injector.instanceOf[MarriageAllowanceController]
-
 
   "Calling Multi Year create relationship" should {
 
@@ -67,106 +64,111 @@ class MultiYearSpec extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfte
       when(mockMarrageAllowanceService.createMultiYearRelationship(any(), any())(any(), any()))
         .thenReturn(Future.failed(new BadRequestException("Participant is deceased")))
 
-      val testInput = TestData.MultiYearCreate.happyScenarioStep1
+      val testInput      = TestData.MultiYearCreate.happyScenarioStep1
       val transferorNino = Nino(testInput.transferor.nino)
-      val transferorCid = testInput.transferor.cid.cid
-      val transferorTs = testInput.transferor.timestamp
-      val recipientCid = testInput.recipient.cid.cid
-      val recipientTs = testInput.recipient.timestamp
+      val transferorCid  = testInput.transferor.cid.cid
+      val transferorTs   = testInput.transferor.timestamp
+      val recipientCid   = testInput.recipient.cid.cid
+      val recipientTs    = testInput.recipient.timestamp
 
-      val testData = s"""{"request":{"transferor_cid":$transferorCid, "transferor_timestamp": "$transferorTs", "recipient_cid":$recipientCid, "recipient_timestamp":"$recipientTs", "taxYears":[2015]}, "notification":{"full_name":"foo bar", "email":"example@example.com", "welsh":false}}"""
+      val testData                  =
+        s"""{"request":{"transferor_cid":$transferorCid, "transferor_timestamp": "$transferorTs", "recipient_cid":$recipientCid, "recipient_timestamp":"$recipientTs", "taxYears":[2015]}, "notification":{"full_name":"foo bar", "email":"example@example.com", "welsh":false}}"""
       val request: Request[JsValue] = FakeRequest().withBody(Json.parse(testData))
-      val result = controller.createMultiYearRelationship(transferorNino, "GDS")(request)
+      val result                    = controller.createMultiYearRelationship(transferorNino, "GDS")(request)
       status(result) shouldBe BAD_REQUEST
     }
 
     "return OK if data is correct for current tax year" in {
 
-      when(mockMarrageAllowanceService.createMultiYearRelationship(any(),any())(any(),any()))
+      when(mockMarrageAllowanceService.createMultiYearRelationship(any(), any())(any(), any()))
         .thenReturn(Future.successful(()))
 
-      val testInput = TestData.MultiYearCreate.happyScenarioStep1
+      val testInput      = TestData.MultiYearCreate.happyScenarioStep1
       val transferorNino = Nino(testInput.transferor.nino)
-      val transferorCid = testInput.transferor.cid.cid
-      val transferorTs = testInput.transferor.timestamp
-      val recipientCid = testInput.recipient.cid.cid
-      val recipientTs = testInput.recipient.timestamp
+      val transferorCid  = testInput.transferor.cid.cid
+      val transferorTs   = testInput.transferor.timestamp
+      val recipientCid   = testInput.recipient.cid.cid
+      val recipientTs    = testInput.recipient.timestamp
 
-      val testData = s"""{"request":{"transferor_cid":$transferorCid, "transferor_timestamp": "$transferorTs", "recipient_cid":$recipientCid, "recipient_timestamp":"$recipientTs", "taxYears":[2015]}, "notification":{"full_name":"foo bar", "email":"example@example.com", "welsh":false}}"""
+      val testData                  =
+        s"""{"request":{"transferor_cid":$transferorCid, "transferor_timestamp": "$transferorTs", "recipient_cid":$recipientCid, "recipient_timestamp":"$recipientTs", "taxYears":[2015]}, "notification":{"full_name":"foo bar", "email":"example@example.com", "welsh":false}}"""
       val request: Request[JsValue] = FakeRequest().withBody(Json.parse(testData))
-      val result = controller.createMultiYearRelationship(transferorNino, "GDS")(request)
+      val result                    = controller.createMultiYearRelationship(transferorNino, "GDS")(request)
       status(result) shouldBe OK
     }
 
     "return OK if data is correct for retrospective year 2015/16, if current tax year is set in the future (1st Jan 2017)" in {
 
-      when(mockMarrageAllowanceService.createMultiYearRelationship(any(),any())(any(),any()))
+      when(mockMarrageAllowanceService.createMultiYearRelationship(any(), any())(any(), any()))
         .thenReturn(Future.successful(()))
 
-      val testInput = TestData.MultiYearCreate.happyScenarioStep1
+      val testInput      = TestData.MultiYearCreate.happyScenarioStep1
       val transferorNino = Nino(testInput.transferor.nino)
-      val transferorCid = testInput.transferor.cid.cid
-      val transferorTs = testInput.transferor.timestamp
-      val recipientCid = testInput.recipient.cid.cid
-      val recipientTs = testInput.recipient.timestamp
+      val transferorCid  = testInput.transferor.cid.cid
+      val transferorTs   = testInput.transferor.timestamp
+      val recipientCid   = testInput.recipient.cid.cid
+      val recipientTs    = testInput.recipient.timestamp
 
-      val testData = s"""{"request":{"transferor_cid":$transferorCid, "transferor_timestamp": "$transferorTs", "recipient_cid":$recipientCid, "recipient_timestamp":"$recipientTs", "taxYears":[2015]}, "notification":{"full_name":"foo bar", "email":"example@example.com", "welsh":false}}"""
+      val testData                  =
+        s"""{"request":{"transferor_cid":$transferorCid, "transferor_timestamp": "$transferorTs", "recipient_cid":$recipientCid, "recipient_timestamp":"$recipientTs", "taxYears":[2015]}, "notification":{"full_name":"foo bar", "email":"example@example.com", "welsh":false}}"""
       val request: Request[JsValue] = FakeRequest().withBody(Json.parse(testData))
-      val result = controller.createMultiYearRelationship(transferorNino, "GDS")(request)
+      val result                    = controller.createMultiYearRelationship(transferorNino, "GDS")(request)
       status(result) shouldBe OK
     }
 
     "return OK if data is correct for retrospective tax year" in {
 
-      when(mockMarrageAllowanceService.createMultiYearRelationship(any(),any())(any(),any()))
+      when(mockMarrageAllowanceService.createMultiYearRelationship(any(), any())(any(), any()))
         .thenReturn(Future.successful(()))
 
-      val testInput = TestData.MultiYearCreate.happyScenarioStep1
+      val testInput      = TestData.MultiYearCreate.happyScenarioStep1
       val transferorNino = Nino(testInput.transferor.nino)
-      val transferorCid = testInput.transferor.cid.cid
-      val transferorTs = testInput.transferor.timestamp
-      val recipientCid = testInput.recipient.cid.cid
-      val recipientTs = testInput.recipient.timestamp
+      val transferorCid  = testInput.transferor.cid.cid
+      val transferorTs   = testInput.transferor.timestamp
+      val recipientCid   = testInput.recipient.cid.cid
+      val recipientTs    = testInput.recipient.timestamp
 
-      val testData = s"""{"request":{"transferor_cid":$transferorCid, "transferor_timestamp": "$transferorTs", "recipient_cid":$recipientCid, "recipient_timestamp":"$recipientTs", "taxYears":[2014]}, "notification":{"full_name":"foo bar", "email":"example@example.com", "welsh":false}}"""
+      val testData                  =
+        s"""{"request":{"transferor_cid":$transferorCid, "transferor_timestamp": "$transferorTs", "recipient_cid":$recipientCid, "recipient_timestamp":"$recipientTs", "taxYears":[2014]}, "notification":{"full_name":"foo bar", "email":"example@example.com", "welsh":false}}"""
       val request: Request[JsValue] = FakeRequest().withBody(Json.parse(testData))
-      val result = controller.createMultiYearRelationship(transferorNino, "GDS")(request)
+      val result                    = controller.createMultiYearRelationship(transferorNino, "GDS")(request)
       status(result) shouldBe OK
     }
 
     "return OK if data is correct for multiple years" in {
 
-      when(mockMarrageAllowanceService.createMultiYearRelationship(any(),any())(any(),any()))
+      when(mockMarrageAllowanceService.createMultiYearRelationship(any(), any())(any(), any()))
         .thenReturn(Future.successful(()))
 
-      val testInput = TestData.MultiYearCreate.happyScenarioStep1
+      val testInput      = TestData.MultiYearCreate.happyScenarioStep1
       val transferorNino = Nino(testInput.transferor.nino)
-      val transferorCid = testInput.transferor.cid.cid
-      val transferorTs = testInput.transferor.timestamp
-      val recipientCid = testInput.recipient.cid.cid
-      val recipientTs = testInput.recipient.timestamp
+      val transferorCid  = testInput.transferor.cid.cid
+      val transferorTs   = testInput.transferor.timestamp
+      val recipientCid   = testInput.recipient.cid.cid
+      val recipientTs    = testInput.recipient.timestamp
 
-      val testData = s"""{"request":{"transferor_cid":$transferorCid, "transferor_timestamp": "$transferorTs", "recipient_cid":$recipientCid, "recipient_timestamp":"$recipientTs", "taxYears":[2015, 2014]}, "notification":{"full_name":"foo bar", "email":"example@example.com", "welsh":false}}"""
+      val testData                  =
+        s"""{"request":{"transferor_cid":$transferorCid, "transferor_timestamp": "$transferorTs", "recipient_cid":$recipientCid, "recipient_timestamp":"$recipientTs", "taxYears":[2015, 2014]}, "notification":{"full_name":"foo bar", "email":"example@example.com", "welsh":false}}"""
       val request: Request[JsValue] = FakeRequest().withBody(Json.parse(testData))
-      val result = controller.createMultiYearRelationship(transferorNino, "GDS")(request)
+      val result                    = controller.createMultiYearRelationship(transferorNino, "GDS")(request)
       status(result) shouldBe OK
     }
 
-
     "return RELATION-MIGHT-BE-CREATED if data is in conflict state (409) for multiple years" in {
 
-      when(mockMarrageAllowanceService.createMultiYearRelationship(any(),any())(any(),any()))
+      when(mockMarrageAllowanceService.createMultiYearRelationship(any(), any())(any(), any()))
         .thenReturn(Future.failed(UpstreamErrorResponse("Cannot update as Participant", 409, 409)))
 
-      val testInput = TestData.MultiYearCreate.happyScenarioStep1
+      val testInput      = TestData.MultiYearCreate.happyScenarioStep1
       val transferorNino = Nino(testInput.transferor.nino)
-      val transferorTs = testInput.transferor.timestamp
-      val recipientCid = testInput.recipient.cid.cid
-      val recipientTs = testInput.recipient.timestamp
+      val transferorTs   = testInput.transferor.timestamp
+      val recipientCid   = testInput.recipient.cid.cid
+      val recipientTs    = testInput.recipient.timestamp
 
-      val testData = s"""{"request":{"transferor_cid":${Cids.cidConflict}, "transferor_timestamp": "$transferorTs", "recipient_cid":$recipientCid, "recipient_timestamp":"$recipientTs", "taxYears":[2015, 2014]}, "notification":{"full_name":"foo bar", "email":"example@example.com", "welsh":false}}"""
+      val testData                  =
+        s"""{"request":{"transferor_cid":${Cids.cidConflict}, "transferor_timestamp": "$transferorTs", "recipient_cid":$recipientCid, "recipient_timestamp":"$recipientTs", "taxYears":[2015, 2014]}, "notification":{"full_name":"foo bar", "email":"example@example.com", "welsh":false}}"""
       val request: Request[JsValue] = FakeRequest().withBody(Json.parse(testData))
-      val response = controller.createMultiYearRelationship(transferorNino, "GDS")(request)
+      val response                  = controller.createMultiYearRelationship(transferorNino, "GDS")(request)
       status(response) shouldBe CONFLICT
       val json = Json.parse(contentAsString(response)(defaultTimeout))
       (json \ "status" \ "status_code").as[String] shouldBe "TAMC:ERROR:RELATION-MIGHT-BE-CREATED"
@@ -174,18 +176,19 @@ class MultiYearSpec extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfte
 
     "return RELATION-MIGHT-BE-CREATED if request results in LTM000503 (503) for multiple years" in {
 
-      when(mockMarrageAllowanceService.createMultiYearRelationship(any(),any())(any(),any()))
+      when(mockMarrageAllowanceService.createMultiYearRelationship(any(), any())(any(), any()))
         .thenReturn(Future.failed(UpstreamErrorResponse("LTM000503", 503, 503)))
 
-      val testInput = TestData.MultiYearCreate.happyScenarioStep1
+      val testInput      = TestData.MultiYearCreate.happyScenarioStep1
       val transferorNino = Nino(testInput.transferor.nino)
-      val transferorTs = testInput.transferor.timestamp
-      val recipientCid = testInput.recipient.cid.cid
-      val recipientTs = testInput.recipient.timestamp
+      val transferorTs   = testInput.transferor.timestamp
+      val recipientCid   = testInput.recipient.cid.cid
+      val recipientTs    = testInput.recipient.timestamp
 
-      val testData = s"""{"request":{"transferor_cid":${Cids.cidServiceUnavailable}, "transferor_timestamp": "$transferorTs", "recipient_cid":$recipientCid, "recipient_timestamp":"$recipientTs", "taxYears":[2015, 2014]}, "notification":{"full_name":"foo bar", "email":"example@example.com", "welsh":false}}"""
+      val testData                  =
+        s"""{"request":{"transferor_cid":${Cids.cidServiceUnavailable}, "transferor_timestamp": "$transferorTs", "recipient_cid":$recipientCid, "recipient_timestamp":"$recipientTs", "taxYears":[2015, 2014]}, "notification":{"full_name":"foo bar", "email":"example@example.com", "welsh":false}}"""
       val request: Request[JsValue] = FakeRequest().withBody(Json.parse(testData))
-      val response = controller.createMultiYearRelationship(transferorNino, "GDS")(request)
+      val response                  = controller.createMultiYearRelationship(transferorNino, "GDS")(request)
       status(response) shouldBe CONFLICT
       val json = Json.parse(contentAsString(response)(defaultTimeout))
       (json \ "status" \ "status_code").as[String] shouldBe "TAMC:ERROR:RELATION-MIGHT-BE-CREATED"
@@ -202,7 +205,8 @@ class MultiYearSpec extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfte
         transferorCid = "3333",
         transferorTimestamp = "4444",
         startDate = Some("2015-01-01"),
-        endDate = Some("2016-02-02"))
+        endDate = Some("2016-02-02")
+      )
 
       val expextedResult =
         """

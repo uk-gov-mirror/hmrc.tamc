@@ -37,8 +37,7 @@ class PertaxConnector @Inject() (
 
   private val pertaxUrl = appConfig.pertaxUrl
 
-  def authorise(
-    implicit
+  def authorise(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): EitherT[Future, UpstreamErrorResponse, PertaxAuthResponse] =

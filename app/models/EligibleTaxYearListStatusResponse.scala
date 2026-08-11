@@ -22,4 +22,7 @@ object EligibleTaxYearListStatusResponse {
   implicit val formats: OFormat[EligibleTaxYearListStatusResponse] = Json.format[EligibleTaxYearListStatusResponse]
 }
 
-case class EligibleTaxYearListStatusResponse(response: Option[EligibleTaxYearListResponse] = None, status: ResponseStatus)
+case class EligibleTaxYearListStatusResponse(
+  response: Option[EligibleTaxYearListResponse] = None,
+  status: ResponseStatus
+)

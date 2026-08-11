@@ -31,7 +31,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import scala.concurrent.ExecutionContext
 
 class PertaxConnectorSpec
-  extends UnitSpec
+    extends UnitSpec
     with GuiceOneAppPerSuite
     with Eventually
     with IntegrationPatience
@@ -40,41 +40,31 @@ class PertaxConnectorSpec
 
   wireMockServer.start()
 
-  override implicit lazy val app: Application =
-    new GuiceApplicationBuilder()
-      .configure(
-        "microservice.services.pertax.port" -> wireMockServer.port()
-      )
-      .build()
+  override implicit lazy val app: Application = new GuiceApplicationBuilder()
+    .configure("microservice.services.pertax.port" -> wireMockServer.port())
+    .build()
 
-  lazy val pertaxConnector: PertaxConnector =
-    app.injector.instanceOf[PertaxConnector]
-  implicit lazy val ec: ExecutionContext =
-    app.injector.instanceOf[ExecutionContext]
-  implicit val hc: HeaderCarrier =
-    HeaderCarrier()
-  private val authoriseUrl: String =
-    s"/pertax/authorise"
+  lazy val pertaxConnector: PertaxConnector = app.injector.instanceOf[PertaxConnector]
+  implicit lazy val ec: ExecutionContext    = app.injector.instanceOf[ExecutionContext]
+  implicit val hc: HeaderCarrier            = HeaderCarrier()
+  private val authoriseUrl: String          = s"/pertax/authorise"
 
   "PertaxAuthConnector" should {
     "return a PertaxAuthResponse with ACCESS_GRANTED code" in {
       wireMockServer.stubFor(
         post(urlEqualTo(authoriseUrl)).willReturn(
           ok(
-            Json.prettyPrint(Json.obj(
-              "code"    -> "ACCESS_GRANTED",
-              "message" -> "Access granted"
-            ))
+            Json.prettyPrint(
+              Json.obj(
+                "code"    -> "ACCESS_GRANTED",
+                "message" -> "Access granted"
+              )
+            )
           )
         )
       )
 
-      val result =
-        pertaxConnector
-          .authorise
-          .value
-          .futureValue
-          .getOrElse(PertaxAuthResponse("INCORRECT", "INCORRECT"))
+      val result = pertaxConnector.authorise.value.futureValue.getOrElse(PertaxAuthResponse("INCORRECT", "INCORRECT"))
 
       result shouldBe PertaxAuthResponse("ACCESS_GRANTED", "Access granted")
     }
@@ -83,21 +73,18 @@ class PertaxConnectorSpec
       wireMockServer.stubFor(
         post(urlEqualTo(authoriseUrl)).willReturn(
           ok(
-            Json.prettyPrint(Json.obj(
-              "code"     -> "NO_HMRC_PT_ENROLMENT",
-              "message"  -> "There is no valid HMRC PT enrolment",
-              "redirect" -> "/tax-enrolment-assignment-frontend/account"
-            ))
+            Json.prettyPrint(
+              Json.obj(
+                "code"     -> "NO_HMRC_PT_ENROLMENT",
+                "message"  -> "There is no valid HMRC PT enrolment",
+                "redirect" -> "/tax-enrolment-assignment-frontend/account"
+              )
+            )
           )
         )
       )
 
-      val result =
-        pertaxConnector
-          .authorise
-          .value
-          .futureValue
-          .getOrElse(PertaxAuthResponse("INCORRECT", "INCORRECT"))
+      val result = pertaxConnector.authorise.value.futureValue.getOrElse(PertaxAuthResponse("INCORRECT", "INCORRECT"))
 
       result shouldBe PertaxAuthResponse("NO_HMRC_PT_ENROLMENT", "There is no valid HMRC PT enrolment")
     }
@@ -106,22 +93,19 @@ class PertaxConnectorSpec
       wireMockServer.stubFor(
         post(urlEqualTo(authoriseUrl)).willReturn(
           ok(
-            Json.prettyPrint(Json.obj(
-              "code"       -> "INVALID_AFFINITY",
-              "message"    -> "The user is neither an individual or an organisation",
-              "errorView"  -> "/path/for/partial",
-              "statusCode" -> "401"
-            ))
+            Json.prettyPrint(
+              Json.obj(
+                "code"       -> "INVALID_AFFINITY",
+                "message"    -> "The user is neither an individual or an organisation",
+                "errorView"  -> "/path/for/partial",
+                "statusCode" -> "401"
+              )
+            )
           )
         )
       )
 
-      val result =
-        pertaxConnector
-          .authorise
-          .value
-          .futureValue
-          .getOrElse(PertaxAuthResponse("INCORRECT", "INCORRECT"))
+      val result = pertaxConnector.authorise.value.futureValue.getOrElse(PertaxAuthResponse("INCORRECT", "INCORRECT"))
 
       result shouldBe PertaxAuthResponse("INVALID_AFFINITY", "The user is neither an individual or an organisation")
     }
@@ -130,22 +114,19 @@ class PertaxConnectorSpec
       wireMockServer.stubFor(
         post(urlEqualTo(authoriseUrl)).willReturn(
           ok(
-            Json.prettyPrint(Json.obj(
-              "code"       -> "MCI_RECORD",
-              "message"    -> "Manual correspondence indicator is set",
-              "errorView"  -> "/path/for/partial",
-              "statusCode" -> "423"
-            ))
+            Json.prettyPrint(
+              Json.obj(
+                "code"       -> "MCI_RECORD",
+                "message"    -> "Manual correspondence indicator is set",
+                "errorView"  -> "/path/for/partial",
+                "statusCode" -> "423"
+              )
+            )
           )
         )
       )
 
-      val result =
-        pertaxConnector
-          .authorise
-          .value
-          .futureValue
-          .getOrElse(PertaxAuthResponse("INCORRECT", "INCORRECT"))
+      val result = pertaxConnector.authorise.value.futureValue.getOrElse(PertaxAuthResponse("INCORRECT", "INCORRECT"))
 
       result shouldBe PertaxAuthResponse("MCI_RECORD", "Manual correspondence indicator is set")
     }
@@ -163,13 +144,8 @@ class PertaxConnectorSpec
           )
         )
 
-        val result =
-          pertaxConnector
-            .authorise
-            .value
-            .futureValue
-            .swap
-            .getOrElse(UpstreamErrorResponse("INCORRECT", UNPROCESSABLE_ENTITY))
+        val result = pertaxConnector.authorise.value.futureValue.swap
+          .getOrElse(UpstreamErrorResponse("INCORRECT", UNPROCESSABLE_ENTITY))
 
         result.statusCode shouldBe error
       }

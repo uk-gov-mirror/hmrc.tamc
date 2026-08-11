@@ -28,20 +28,21 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpReads, HttpResponse, 
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EmailConnector @Inject()(http: HttpClientV2, appConfig: ApplicationConfig) {
+class EmailConnector @Inject() (http: HttpClientV2, appConfig: ApplicationConfig) {
 
-  def sendEmail(sendEmailRequest: SendEmailRequest)
-               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpstreamErrorResponse, Unit]] =
+  def sendEmail(
+    sendEmailRequest: SendEmailRequest
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpstreamErrorResponse, Unit]] =
     http
       .post(url"${appConfig.EMAIL_URL}/hmrc/email")
       .withBody(Json.toJson(sendEmailRequest))
       .execute[Either[UpstreamErrorResponse, HttpResponse]]
       .map {
-        case Right(_) => Right(())
+        case Right(_)    => Right(())
         case Left(error) => Left(error)
       }
-      .recover {
-        case error: HttpException => Left(UpstreamErrorResponse(error.message, BAD_GATEWAY))
+      .recover { case error: HttpException =>
+        Left(UpstreamErrorResponse(error.message, BAD_GATEWAY))
       }
 
   implicit val reads: HttpReads[Either[UpstreamErrorResponse, HttpResponse]] =

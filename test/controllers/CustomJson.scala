@@ -23,13 +23,15 @@ import test_utils.UnitSpec
 class CustomJson extends UnitSpec {
   "MultiYearDesCreateRelationshipRequest be properly transformed to JSON" should {
     "if dates are not available" in {
-      Json.toJson(MultiYearDesCreateRelationshipRequest("a", "b", "c", "d", None, None))
+      Json
+        .toJson(MultiYearDesCreateRelationshipRequest("a", "b", "c", "d", None, None))
         .toString() shouldBe
         """{"CID1":"a","CID1Timestamp":"b","CID2":"c","CID2Timestamp":"d"}"""
     }
 
     "if dates are available" in {
-      Json.toJson(MultiYearDesCreateRelationshipRequest("a", "b", "c", "d", Some("f"), Some("g")))
+      Json
+        .toJson(MultiYearDesCreateRelationshipRequest("a", "b", "c", "d", Some("f"), Some("g")))
         .toString() shouldBe
         """{"CID1":"a","CID1Timestamp":"b","CID2":"c","CID2Timestamp":"d","startDate":"f","endDate":"g"}"""
     }

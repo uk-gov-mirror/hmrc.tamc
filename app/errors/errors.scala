@@ -21,25 +21,26 @@ case class FindRecipientError(returnCode: Int, reasonCode: Int) extends ServiceE
 case class CheckRelationshipError(returnCode: Int, reasonCode: Int) extends ServiceError(returnCode, reasonCode)
 case class CreateRelationshipError(returnCode: Int, reasonCode: Int) extends ServiceError(returnCode, reasonCode)
 
-sealed abstract class ServiceError(returnCode: Int, reasonCode: Int) extends RuntimeException(s"(return_code:${returnCode},reason_code:${reasonCode})")
-case class TransferorDeceasedError(message: String) extends RuntimeException(s"error message :${message}")
-case class RecipientDeceasedError(message: String) extends RuntimeException(s"error message :${message}")
-case class UpdateRelationshipError(message: String) extends RuntimeException(s"error message :${message}")
-case class MultiYearCreateRelationshipError(message: String) extends RuntimeException(s"error message :${message}")
+sealed abstract class ServiceError(returnCode: Int, reasonCode: Int)
+    extends RuntimeException(s"(return_code:$returnCode,reason_code:$reasonCode)")
+case class TransferorDeceasedError(message: String) extends RuntimeException(s"error message :$message")
+case class RecipientDeceasedError(message: String) extends RuntimeException(s"error message :$message")
+case class UpdateRelationshipError(message: String) extends RuntimeException(s"error message :$message")
+case class MultiYearCreateRelationshipError(message: String) extends RuntimeException(s"error message :$message")
 
-case class RelationshipMightBeCreatedError(message: String) extends RuntimeException(s"error message :${message}")
+case class RelationshipMightBeCreatedError(message: String) extends RuntimeException(s"error message :$message")
 
 object ErrorResponseStatus {
 
-  val CITIZEN_NOT_FOUND = "TAMC:ERROR:CITIZEN-NOT-FOUND"
-  val BAD_REQUEST = "TAMC:ERROR:BAD-REQUEST"
-  val SERVER_ERROR = "ERROR:500"
-  val SERVICE_UNAVILABLE = "ERROR:503"
+  val CITIZEN_NOT_FOUND          = "TAMC:ERROR:CITIZEN-NOT-FOUND"
+  val BAD_REQUEST                = "TAMC:ERROR:BAD-REQUEST"
+  val SERVER_ERROR               = "ERROR:500"
+  val SERVICE_UNAVILABLE         = "ERROR:503"
   val CANNOT_UPDATE_RELATIONSHIP = "TAMC:ERROR:CANNOT-UPDATE-RELATIONSHIP"
-  val TRANSFEROR_NOT_FOUND = "TAMC:ERROR:TRANSFEROR-NOT-FOUND"
-  val RELATION_MIGHT_BE_CREATED = "TAMC:ERROR:RELATION-MIGHT-BE-CREATED"
-  val RECIPIENT_DECEASED = "TAMC:ERROR:RECIPIENT-DECEASED"
-  val OTHER_ERROR = "TAMC:ERROR:OTHER-ERROR"
-  val TRANSFERER_DECEASED = "TAMC:ERROR:TRANSFERER-DECEASED"
-  val RECIPIENT_NOT_FOUND = "TAMC:ERROR:RECIPIENT-NOT-FOUND"
+  val TRANSFEROR_NOT_FOUND       = "TAMC:ERROR:TRANSFEROR-NOT-FOUND"
+  val RELATION_MIGHT_BE_CREATED  = "TAMC:ERROR:RELATION-MIGHT-BE-CREATED"
+  val RECIPIENT_DECEASED         = "TAMC:ERROR:RECIPIENT-DECEASED"
+  val OTHER_ERROR                = "TAMC:ERROR:OTHER-ERROR"
+  val TRANSFERER_DECEASED        = "TAMC:ERROR:TRANSFERER-DECEASED"
+  val RECIPIENT_NOT_FOUND        = "TAMC:ERROR:RECIPIENT-NOT-FOUND"
 }

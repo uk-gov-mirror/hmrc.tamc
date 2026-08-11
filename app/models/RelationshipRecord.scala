@@ -21,61 +21,76 @@ import play.api.libs.json.*
 
 case class RelationshipRecordWrapper(
   relationshipRecordList: Seq[RelationshipRecord],
-  userRecord: Option[UserRecord] = None)
+  userRecord: Option[UserRecord] = None
+)
 
-case class RelationshipRecord(participant: String,
-                              creationTimestamp: String,
-                              participant1StartDate: String,
-                              relationshipEndReason: Option[RelationshipEndReason] = None,
-                              participant1EndDate: Option[String] = None,
-                              otherParticipantInstanceIdentifier: String,
-                              otherParticipantUpdateTimestamp: String
-                             ) {
+case class RelationshipRecord(
+  participant: String,
+  creationTimestamp: String,
+  participant1StartDate: String,
+  relationshipEndReason: Option[RelationshipEndReason] = None,
+  participant1EndDate: Option[String] = None,
+  otherParticipantInstanceIdentifier: String,
+  otherParticipantUpdateTimestamp: String
+) {
 
-  def this(participant: Int,
-           creationTimestamp: String,
-           participant1StartDate: String,
-           relationshipEndReason: Option[RelationshipEndReason],
-           participant1EndDate: Option[String],
-           otherParticipantInstanceIdentifier: String,
-           otherParticipantUpdateTimestamp: String) =
+  def this(
+    participant: Int,
+    creationTimestamp: String,
+    participant1StartDate: String,
+    relationshipEndReason: Option[RelationshipEndReason],
+    participant1EndDate: Option[String],
+    otherParticipantInstanceIdentifier: String,
+    otherParticipantUpdateTimestamp: String
+  ) =
     this(
       if (participant == 1) "Recipient"
-      else "Transferor", creationTimestamp, participant1StartDate, relationshipEndReason,
-        participant1EndDate, otherParticipantInstanceIdentifier, otherParticipantUpdateTimestamp)
+      else "Transferor",
+      creationTimestamp,
+      participant1StartDate,
+      relationshipEndReason,
+      participant1EndDate,
+      otherParticipantInstanceIdentifier,
+      otherParticipantUpdateTimestamp
+    )
 }
 
 object RelationshipRecord {
 
   implicit object RelationshipRecordFormat extends Format[RelationshipRecord] {
-    def reads(json: JsValue): JsResult[RelationshipRecord] = JsSuccess(new RelationshipRecord(
-
-      (json \ "participant").as[Int],
-      (json \ "creationTimestamp").as[String],
-      (json \ "participant1StartDate").as[String],
-      (json \ "relationshipEndReason").asOpt[RelationshipEndReason](RelationshipEndReasonHodsReads),
-      (json \ "participant1EndDate").asOpt[String],
-      (json \ "otherParticipantInstanceIdentifier").as[String],
-      (json \ "otherParticipantUpdateTimestamp").as[String]))
+    def reads(json: JsValue): JsResult[RelationshipRecord] = JsSuccess(
+      new RelationshipRecord(
+        (json \ "participant").as[Int],
+        (json \ "creationTimestamp").as[String],
+        (json \ "participant1StartDate").as[String],
+        (json \ "relationshipEndReason").asOpt[RelationshipEndReason](RelationshipEndReasonHodsReads),
+        (json \ "participant1EndDate").asOpt[String],
+        (json \ "otherParticipantInstanceIdentifier").as[String],
+        (json \ "otherParticipantUpdateTimestamp").as[String]
+      )
+    )
 
     def writes(relationshipRecord: RelationshipRecord): JsValue = Json.obj(
-
-      "participant" -> relationshipRecord.participant,
-      "creationTimestamp" -> relationshipRecord.creationTimestamp,
-      "participant1StartDate" -> relationshipRecord.participant1StartDate,
-      "relationshipEndReason" -> Json.toJson(relationshipRecord.relationshipEndReason),
-      "participant1EndDate" -> relationshipRecord.participant1EndDate,
+      "participant"                        -> relationshipRecord.participant,
+      "creationTimestamp"                  -> relationshipRecord.creationTimestamp,
+      "participant1StartDate"              -> relationshipRecord.participant1StartDate,
+      "relationshipEndReason"              -> Json.toJson(relationshipRecord.relationshipEndReason),
+      "participant1EndDate"                -> relationshipRecord.participant1EndDate,
       "otherParticipantInstanceIdentifier" -> relationshipRecord.otherParticipantInstanceIdentifier,
-      "otherParticipantUpdateTimestamp" -> relationshipRecord.otherParticipantUpdateTimestamp)
+      "otherParticipantUpdateTimestamp"    -> relationshipRecord.otherParticipantUpdateTimestamp
+    )
   }
 }
 
 object RelationshipRecordWrapper {
 
   implicit object RelationshipRecordListFormat extends Format[RelationshipRecordWrapper] {
-    def reads(json: JsValue): JsResult[RelationshipRecordWrapper] = JsSuccess(RelationshipRecordWrapper(
-      (json \ "relationships").as[Seq[RelationshipRecord]]))
-    def writes(relatisoshipRecordWrapper: RelationshipRecordWrapper): JsValue = Json.obj("relationships" -> relatisoshipRecordWrapper.relationshipRecordList,
-      "userRecord" -> relatisoshipRecordWrapper.userRecord)
+    def reads(json: JsValue): JsResult[RelationshipRecordWrapper]             = JsSuccess(
+      RelationshipRecordWrapper((json \ "relationships").as[Seq[RelationshipRecord]])
+    )
+    def writes(relatisoshipRecordWrapper: RelationshipRecordWrapper): JsValue = Json.obj(
+      "relationships" -> relatisoshipRecordWrapper.relationshipRecordList,
+      "userRecord"    -> relatisoshipRecordWrapper.userRecord
+    )
   }
 }

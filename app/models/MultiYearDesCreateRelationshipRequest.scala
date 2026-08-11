@@ -28,14 +28,14 @@ object MultiYearDesCreateRelationshipRequest {
       (__ \ "CID2Timestamp").write[String] and
       (__ \ "startDate").writeNullable[String] and
       (__ \ "endDate").writeNullable[String]
-    )(o => Tuple.fromProductTyped(o))
+  )(o => Tuple.fromProductTyped(o))
 }
 
 case class MultiYearDesCreateRelationshipRequest(
-                                                  recipientCid: String,
-                                                  recipientTimestamp: String,
-                                                  transferorCid: String,
-                                                  transferorTimestamp: String,
-                                                  startDate: Option[String],
-                                                  endDate: Option[String]
-                                                )
+  recipientCid: String,
+  recipientTimestamp: String,
+  transferorCid: String,
+  transferorTimestamp: String,
+  startDate: Option[String],
+  endDate: Option[String]
+)

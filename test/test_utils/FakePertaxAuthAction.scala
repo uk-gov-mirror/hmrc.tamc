@@ -23,8 +23,8 @@ import play.api.mvc.{ControllerComponents, Request, Result}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakePertaxAuthAction @Inject()(
-  implicit override val executionContext: ExecutionContext,
+class FakePertaxAuthAction @Inject() (implicit
+  override val executionContext: ExecutionContext,
   pertaxConnector: PertaxConnector,
   controllerComponents: ControllerComponents
 ) extends PertaxAuthAction(pertaxConnector, controllerComponents) {

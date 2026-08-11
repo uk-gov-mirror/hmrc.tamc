@@ -22,4 +22,10 @@ object MultiYearCreateRelationshipRequest {
   implicit val formats: OFormat[MultiYearCreateRelationshipRequest] = Json.format[MultiYearCreateRelationshipRequest]
 }
 
-case class MultiYearCreateRelationshipRequest(transferor_cid: Cid, transferor_timestamp: Timestamp, recipient_cid: Cid, recipient_timestamp: Timestamp, taxYears: List[Int])
+case class MultiYearCreateRelationshipRequest(
+  transferor_cid: Cid,
+  transferor_timestamp: Timestamp,
+  recipient_cid: Cid,
+  recipient_timestamp: Timestamp,
+  taxYears: List[Int]
+)

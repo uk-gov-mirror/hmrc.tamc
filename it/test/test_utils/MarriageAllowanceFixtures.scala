@@ -17,12 +17,11 @@
 package test_utils
 
 import models.Cid
-import play.api.libs.json.{JsString, Json}
+import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 
 trait MarriageAllowanceFixtures {
 
-  def getRecipientRelationshipResponse(cid: Cid, reasonCode: Int = 1, returnCode: Int = 1) = Json.parse(
-    s"""{
+  def getRecipientRelationshipResponse(cid: Cid, reasonCode: Int = 1, returnCode: Int = 1): JsValue = Json.parse(s"""{
           "Jfwk1012FindCheckPerNoninocallResponse": {
             "Jfwk1012FindCheckPerNoninoExport": {
               "@exitStateType": "0",
@@ -44,13 +43,13 @@ trait MarriageAllowanceFixtures {
           }
       }""")
 
-  val successPertaxAuthResponse = Json.obj(
-    "code" -> JsString("ACCESS_GRANTED"),
-            "message" -> JsString("Some message")
+  val successPertaxAuthResponse: JsObject = Json.obj(
+    "code"    -> JsString("ACCESS_GRANTED"),
+    "message" -> JsString("Some message")
   )
 
-  def findCitizenResponse(cid: Cid, deceasedSignal: String = "N", returnCode: Int = 1, reasonCode: Int = 1) = Json.parse(
-  s"""{
+  def findCitizenResponse(cid: Cid, deceasedSignal: String = "N", returnCode: Int = 1, reasonCode: Int = 1): JsValue =
+    Json.parse(s"""{
         "Jtpr1311PerDetailsFindcallResponse":{
             "Jtpr1311PerDetailsFindExport":{
                 "OutItpr1Person":{
@@ -68,8 +67,7 @@ trait MarriageAllowanceFixtures {
         }
     }""")
 
-  val listRelationshipResponse = Json.parse(
-    """
+  val listRelationshipResponse: JsValue = Json.parse("""
       |{
       |  "relationships": [
       |  {
@@ -270,8 +268,7 @@ trait MarriageAllowanceFixtures {
       |
       |""".stripMargin)
 
-  val createMultiYearRelationshipResponse = Json.parse(
-    """
+  val createMultiYearRelationshipResponse: JsValue = Json.parse("""
       |{
       |  "CID1": "999059794",
       |  "CID1Timestamp": "2021",
@@ -281,7 +278,7 @@ trait MarriageAllowanceFixtures {
       |}
       |""".stripMargin)
 
-  val createMultiYearError = Json.parse(
+  val createMultiYearError: JsValue = Json.parse(
     """
       |{
       |  "reason": "Participant 2 identified by Instance Identifier is merged out"
@@ -289,7 +286,7 @@ trait MarriageAllowanceFixtures {
       |""".stripMargin
   )
 
-  val LTM000503Error = Json.parse(
+  val LTM000503Error: JsValue = Json.parse(
     """
       |{
       |  "incidentReference":"LTM000503"
@@ -297,7 +294,7 @@ trait MarriageAllowanceFixtures {
       |""".stripMargin
   )
 
-  val unableToUpdateError = Json.parse(
+  val unableToUpdateError: JsValue = Json.parse(
     """
       |{
       |  "Reason": "Cannot update as Participant 1, update timestamp has changed since last view of data"
@@ -305,7 +302,7 @@ trait MarriageAllowanceFixtures {
       |""".stripMargin
   )
 
-  val updateAllowanceRelationshipResponse = Json.parse(
+  val updateAllowanceRelationshipResponse: JsValue = Json.parse(
     """
       |{
       |  "participant1": {

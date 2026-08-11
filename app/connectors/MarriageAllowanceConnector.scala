@@ -27,37 +27,41 @@ import uk.gov.hmrc.http._
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-
 trait MarriageAllowanceConnector extends Logging {
 
-  val ProcessingOK = 1
-  val ErrorReturnCode = -1011
-  val NinoNotFound = 2016
-  val MultipleNinosInMergeTrail = 2017
-  val ConfidenceCheck = 2018
-  val NinoRequired = 2039
+  val ProcessingOK               = 1
+  val ErrorReturnCode            = -1011
+  val NinoNotFound               = 2016
+  val MultipleNinosInMergeTrail  = 2017
+  val ConfidenceCheck            = 2018
+  val NinoRequired               = 2039
   val OnlyOneNinoOrTempReference = 2040
-  val SurnameNotSupplied = 2061
+  val SurnameNotSupplied         = 2061
 
   val serviceUrl: String
   val urlHeaderEnvironment: String
   val urlHeaderAuthorization: String
   val metrics: TamcMetrics
-  def url(path: String) = s"$serviceUrl$path"
+  def url(path: String)                        = s"$serviceUrl$path"
   def ninoWithoutSpaces(nino: Nino): Timestamp = nino.value.replaceAll(" ", "")
 
-  def handleValidationError[A]: scala.collection.Seq[(JsPath, scala.collection.Seq[JsonValidationError])] => Either[DataRetrievalError, A] =  err => {
+  def handleValidationError[A]
+    : scala.collection.Seq[(JsPath, scala.collection.Seq[JsonValidationError])] => Either[DataRetrievalError, A] =
+    err => {
 
-    val extractValidationErrors: scala.collection.Seq[(JsPath, scala.collection.Seq[JsonValidationError])] => String = errors => {
-      errors.map {
-        case (path, List(validationError: JsonValidationError, _*)) => s"$path: ${validationError.message}"
-        case (path, err) => s"$path: ${err}"
-      }.mkString(", ").trim
+      val extractValidationErrors: scala.collection.Seq[(JsPath, scala.collection.Seq[JsonValidationError])] => String =
+        errors =>
+          errors
+            .map {
+              case (path, List(validationError: JsonValidationError, _*)) => s"$path: ${validationError.message}"
+              case (path, err)                                            => s"$path: $err"
+            }
+            .mkString(", ")
+            .trim
+
+      logger.error(s"Not able to parse the response received from DES with error ${extractValidationErrors(err)}")
+      Left(ResponseValidationError)
     }
-
-    logger.error(s"Not able to parse the response received from DES with error ${extractValidationErrors(err)}")
-    Left(ResponseValidationError)
-  }
 
   def explicitHeaders(implicit hc: HeaderCarrier): List[(String, String)] =
     List(
@@ -65,21 +69,29 @@ trait MarriageAllowanceConnector extends Logging {
       HeaderNames.xRequestId    -> hc.requestId.fold("-")(_.value),
       HeaderNames.xSessionId    -> hc.sessionId.fold("-")(_.value),
       "Environment"             -> urlHeaderEnvironment,
-      "CorrelationId"           -> UUID.randomUUID().toString)
+      "CorrelationId"           -> UUID.randomUUID().toString
+    )
 
-  def findCitizen(nino: Nino)(
-    implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, JsValue]]
+  def findCitizen(
+    nino: Nino
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, JsValue]]
 
-  def listRelationship(cid: Cid, includeHistoric: Boolean = true)(
-    implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, JsValue]]
+  def listRelationship(cid: Cid, includeHistoric: Boolean = true)(implicit
+    ec: ExecutionContext,
+    hc: HeaderCarrier
+  ): Future[Either[UpstreamErrorResponse, JsValue]]
 
-  def findRecipient(findRecipientRequest: FindRecipientRequest)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[DataRetrievalError, UserRecord]]
+  def findRecipient(
+    findRecipientRequest: FindRecipientRequest
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[DataRetrievalError, UserRecord]]
 
   def sendMultiYearCreateRelationshipRequest(
-    relType: String, createRelationshipRequest: MultiYearDesCreateRelationshipRequest)(
-    implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, JsValue]]
+    relType: String,
+    createRelationshipRequest: MultiYearDesCreateRelationshipRequest
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, JsValue]]
 
-  def updateAllowanceRelationship(updateRelationshipRequest: DesUpdateRelationshipRequest)(
-    implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, Unit]]
+  def updateAllowanceRelationship(
+    updateRelationshipRequest: DesUpdateRelationshipRequest
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, Unit]]
 
 }

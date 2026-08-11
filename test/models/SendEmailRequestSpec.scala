@@ -20,15 +20,14 @@ import models.emailAddress.EmailAddress
 import play.api.libs.json.{JsObject, Json}
 import test_utils.UnitSpec
 
-class SendEmailRequestSpec
-  extends UnitSpec {
+class SendEmailRequestSpec extends UnitSpec {
 
   private val sendEmailRequest: SendEmailRequest =
     SendEmailRequest(
-      to         = List(new EmailAddress("bob@test.com")),
+      to = List(new EmailAddress("bob@test.com")),
       templateId = "tamc_recipient_rejects_retro_yr",
       parameters = Map("a" -> "b"),
-      force      = false
+      force = false
     )
 
   private val jsonObj: JsObject =
@@ -43,10 +42,10 @@ class SendEmailRequestSpec
     "serialise and de-serialise" in {
       Json.toJson(sendEmailRequest) shouldBe jsonObj
 
-      jsonObj.as[SendEmailRequest].to shouldBe List(new EmailAddress("bob@test.com"))
+      jsonObj.as[SendEmailRequest].to         shouldBe List(new EmailAddress("bob@test.com"))
       jsonObj.as[SendEmailRequest].templateId shouldBe "tamc_recipient_rejects_retro_yr"
       jsonObj.as[SendEmailRequest].parameters shouldBe Map("a" -> "b")
-      jsonObj.as[SendEmailRequest].force shouldBe false
+      jsonObj.as[SendEmailRequest].force      shouldBe false
     }
   }
 }

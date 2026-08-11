@@ -23,15 +23,21 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 object FindRecipientRequest {
-  private val pattern = "dd/MM/yyyy"
+  private val pattern                                    = "dd/MM/yyyy"
   private def writes(pattern: String): Writes[LocalDate] = {
     val datePattern: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
-    Writes[LocalDate] { date => JsString(date.format(datePattern))}
+    Writes[LocalDate](date => JsString(date.format(datePattern)))
 
   }
 
-  implicit val dateFormat: Format[LocalDate] = Format[LocalDate](Reads.localDateReads(pattern), writes(pattern))
+  implicit val dateFormat: Format[LocalDate]          = Format[LocalDate](Reads.localDateReads(pattern), writes(pattern))
   implicit val formats: OFormat[FindRecipientRequest] = Json.format[FindRecipientRequest]
 }
 
-case class FindRecipientRequest(name: String, lastName: String, gender: Gender, nino: Nino, dateOfMarriage: Option[LocalDate] = None)
+case class FindRecipientRequest(
+  name: String,
+  lastName: String,
+  gender: Gender,
+  nino: Nino,
+  dateOfMarriage: Option[LocalDate] = None
+)
