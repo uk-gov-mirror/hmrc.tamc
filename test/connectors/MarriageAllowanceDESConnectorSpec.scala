@@ -22,7 +22,7 @@ import errors._
 import metrics.TamcMetrics
 import models._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when, reset => resetMock}
+import org.mockito.Mockito.{reset => resetMock, times, verify, when}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status._
@@ -32,7 +32,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.{JsValue, Json}
 import play.api.{Application, inject}
 import test_utils.UnitSpec
-import uk.gov.hmrc.domain.{Generator, Nino}
+import uk.gov.hmrc.domain.{Nino, NinoGenerator}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.test.WireMockSupport
@@ -44,7 +44,7 @@ import scala.util.Random
 
 class MarriageAllowanceDESConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with WireMockSupport {
 
-  val mockMetrics: TamcMetrics = mock[TamcMetrics]
+  val mockMetrics: TamcMetrics  = mock[TamcMetrics]
   val mockTimerContext: Context = mock[Context]
 
   override def beforeEach(): Unit = {
@@ -54,41 +54,38 @@ class MarriageAllowanceDESConnectorSpec extends UnitSpec with GuiceOneAppPerSuit
     when(mockMetrics.startTimer(ApiType.FindRecipient)).thenReturn(mockTimerContext)
   }
 
-  override def fakeApplication(): Application = {
+  override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .overrides(
         inject.bind[Context].toInstance(mockTimerContext),
         inject.bind[TamcMetrics].toInstance(mockMetrics)
       )
       .configure(
-        "metrics.jvm" -> false,
-        "microservice.services.marriage-allowance-des.host" -> "127.0.0.1",
-        "microservice.services.marriage-allowance-des.port" -> wireMockPort,
-        "microservice.services.marriage-allowance-des.environment" -> "test",
+        "metrics.jvm"                                                      -> false,
+        "microservice.services.marriage-allowance-des.host"                -> "127.0.0.1",
+        "microservice.services.marriage-allowance-des.port"                -> wireMockPort,
+        "microservice.services.marriage-allowance-des.environment"         -> "test",
         "microservice.services.marriage-allowance-des.authorization-token" -> "Bearer"
       )
       .build()
-  }
 
   lazy val connector: MarriageAllowanceDESConnector = app.injector.instanceOf[MarriageAllowanceDESConnector]
 
-  val generatedNino: Nino = new Generator().nextNino
-  val url = s"/marriage-allowance/citizen/${generatedNino.nino}/check"
+  val generatedNino: Nino = NinoGenerator().nextNino
+  val url                 = s"/marriage-allowance/citizen/${generatedNino.nino}/check"
 
-  def findRecipientRequest(nino: Nino = generatedNino): FindRecipientRequest = {
+  def findRecipientRequest(nino: Nino = generatedNino): FindRecipientRequest =
     FindRecipientRequest(name = "testForename1", lastName = "testLastName", gender = Gender("M"), nino)
-  }
 
-  val instanceIdentifier: Cid = 123456789
+  val instanceIdentifier: Cid    = 123456789
   val updateTimestamp: Timestamp = "20200116155359011123"
-  val requestId: RequestId = RequestId(Random.alphanumeric.take(10).mkString)
-  val sessionId: SessionId = SessionId(Random.alphanumeric.take(10).mkString)
+  val requestId: RequestId       = RequestId(Random.alphanumeric.take(10).mkString)
+  val sessionId: SessionId       = SessionId(Random.alphanumeric.take(10).mkString)
   implicit val hc: HeaderCarrier = HeaderCarrier().copy(requestId = Some(requestId), sessionId = Some(sessionId))
   lazy val processingCodeOK: Int = connector.ProcessingOK
-  val uuidRegex = """[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}"""
+  val uuidRegex                  = """[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}"""
 
-  def expectedJson(reasonCode: Int, returnCode: Int): JsValue = Json.parse(
-    s"""{
+  def expectedJson(reasonCode: Int, returnCode: Int): JsValue = Json.parse(s"""{
           "Jfwk1012FindCheckPerNoninocallResponse": {
             "Jfwk1012FindCheckPerNoninoExport": {
               "@exitStateType": "0",
@@ -129,7 +126,8 @@ class MarriageAllowanceDESConnectorSpec extends UnitSpec with GuiceOneAppPerSuit
             .withHeader(HeaderNames.xRequestId, equalTo(requestId.value))
             .withHeader(HeaderNames.xSessionId, equalTo(sessionId.value))
             .withHeader("Environment", equalTo(connector.urlHeaderEnvironment))
-            .withHeader("CorrelationId", matching(uuidRegex)))
+            .withHeader("CorrelationId", matching(uuidRegex))
+        )
       }
 
       "a valid nino is provided, which contains spaces" in {
@@ -156,12 +154,13 @@ class MarriageAllowanceDESConnectorSpec extends UnitSpec with GuiceOneAppPerSuit
       )
       await(connector.findRecipient(findRecipientRequest()))
 
-      wireMockServer.verify(postRequestedFor(urlEqualTo(url))
-        .withHeader(HeaderNames.authorisation, equalTo(connector.urlHeaderAuthorization))
-        .withHeader(HeaderNames.xRequestId, equalTo(requestId.value))
-        .withHeader(HeaderNames.xSessionId, equalTo(sessionId.value))
-        .withHeader("Environment", equalTo(connector.urlHeaderEnvironment))
-        .withHeader("CorrelationId", matching(uuidRegex))
+      wireMockServer.verify(
+        postRequestedFor(urlEqualTo(url))
+          .withHeader(HeaderNames.authorisation, equalTo(connector.urlHeaderAuthorization))
+          .withHeader(HeaderNames.xRequestId, equalTo(requestId.value))
+          .withHeader(HeaderNames.xSessionId, equalTo(sessionId.value))
+          .withHeader("Environment", equalTo(connector.urlHeaderEnvironment))
+          .withHeader("CorrelationId", matching(uuidRegex))
       )
     }
 
@@ -228,7 +227,7 @@ class MarriageAllowanceDESConnectorSpec extends UnitSpec with GuiceOneAppPerSuit
       }
     }
 
-    //TODO These are mocking HttpClient. We shouldn't be mocking this however functioanlity exists to capture these errors.
+    // TODO These are mocking HttpClient. We shouldn't be mocking this however functioanlity exists to capture these errors.
     "return a TimeOutError " when {
       "a GatewayTimeout is received" in {
 
@@ -309,7 +308,7 @@ class MarriageAllowanceDESConnectorSpec extends UnitSpec with GuiceOneAppPerSuit
     }
 
     "return a non fatal error after stopping the timer" in {
-      val mockHttp = mock[HttpClientV2]
+      val mockHttp                       = mock[HttpClientV2]
       val requestBuilder: RequestBuilder = mock[RequestBuilder]
 
       when(mockHttp.post(any[URL])(any[HeaderCarrier])).thenReturn(requestBuilder)
@@ -319,12 +318,13 @@ class MarriageAllowanceDESConnectorSpec extends UnitSpec with GuiceOneAppPerSuit
           inject.bind[TamcMetrics].toInstance(mockMetrics),
           inject.bind[HttpClientV2].toInstance(mockHttp),
           inject.bind[RequestBuilder].toInstance(requestBuilder)
-        ).injector()
+        )
+        .injector()
 
       val connector: MarriageAllowanceDESConnector = injector.instanceOf[MarriageAllowanceDESConnector]
 
-
-      when(requestBuilder.execute[Either[DataRetrievalError, UserRecord]](using connector.httpRead, global)).thenReturn(Future.failed(new RuntimeException("broken")))
+      when(requestBuilder.execute[Either[DataRetrievalError, UserRecord]](using connector.httpRead, global))
+        .thenReturn(Future.failed(new RuntimeException("broken")))
       when(requestBuilder.withBody(any)(using any, any, any)).thenReturn(injector.instanceOf[RequestBuilder])
       when(requestBuilder.setHeader(any)).thenReturn(injector.instanceOf[RequestBuilder])
 
@@ -412,11 +412,11 @@ class MarriageAllowanceDESConnectorSpec extends UnitSpec with GuiceOneAppPerSuit
   }
 
   "sendMultiYearCreateRelationshipRequest" should {
-    val relType = Random.alphanumeric.take(5).mkString
-    val recipientCid = Random.alphanumeric.take(5).mkString
+    val relType             = Random.alphanumeric.take(5).mkString
+    val recipientCid        = Random.alphanumeric.take(5).mkString
     val relationshipRequest =
       MultiYearDesCreateRelationshipRequest(recipientCid, "", "", "", None, None)
-    val url = s"/marriage-allowance/02.00.00/citizen/$recipientCid/relationship/$relType"
+    val url                 = s"/marriage-allowance/02.00.00/citizen/$recipientCid/relationship/$relType"
 
     "pass correct headers to des" in {
       wireMockServer.stubFor(
@@ -438,8 +438,8 @@ class MarriageAllowanceDESConnectorSpec extends UnitSpec with GuiceOneAppPerSuit
   }
 
   "updateAllowanceRelationship" should {
-    val instanceId = Random.alphanumeric.take(5).mkString
-    val url = s"/marriage-allowance/citizen/$instanceId/relationship"
+    val instanceId          = Random.alphanumeric.take(5).mkString
+    val url                 = s"/marriage-allowance/citizen/$instanceId/relationship"
     val relationshipRequest = DesUpdateRelationshipRequest(
       DesRecipientInformation(instanceId, ""),
       DesTransferorInformation(""),

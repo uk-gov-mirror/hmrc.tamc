@@ -67,20 +67,20 @@ object RelationshipEndReason {
   }
 
   object RelationshipEndReasonHodsReads extends Reads[RelationshipEndReason] with Logging {
-    override def reads(json: JsValue): JsResult[RelationshipEndReason] = json.as[String] match{
-      case "Death (either participant)" => JsSuccess(Death)
-      case "Divorce/Separation" => JsSuccess(Divorce)
+    override def reads(json: JsValue): JsResult[RelationshipEndReason] = json.as[String] match {
+      case "Death (either participant)"                  => JsSuccess(Death)
+      case "Divorce/Separation"                          => JsSuccess(Divorce)
       case "Relationship Type specific - for future use" => JsSuccess(Default)
-      case "Invalid Participant" => JsSuccess(InvalidParticipant)
-      case "Ended by Participant 2" => JsSuccess(Cancelled)
-      case "Ended by Participant 1" => JsSuccess(Rejected)
-      case "Ended by HMRC" => JsSuccess(Hmrc)
-      case "Closed by mutual consent of participants" => JsSuccess(Closed)
-      case "Merger" => JsSuccess(Merger)
-      case "Retrospective" => JsSuccess(Retrospective)
-      case "System Closure" => JsSuccess(System)
-      case "Active" => JsSuccess(Active)
-      case unknown =>
+      case "Invalid Participant"                         => JsSuccess(InvalidParticipant)
+      case "Ended by Participant 2"                      => JsSuccess(Cancelled)
+      case "Ended by Participant 1"                      => JsSuccess(Rejected)
+      case "Ended by HMRC"                               => JsSuccess(Hmrc)
+      case "Closed by mutual consent of participants"    => JsSuccess(Closed)
+      case "Merger"                                      => JsSuccess(Merger)
+      case "Retrospective"                               => JsSuccess(Retrospective)
+      case "System Closure"                              => JsSuccess(System)
+      case "Active"                                      => JsSuccess(Active)
+      case unknown                                       =>
         logger.warn(s"Unexpected reason code :'$unknown'")
         JsSuccess(Default)
     }

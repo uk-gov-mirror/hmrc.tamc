@@ -28,6 +28,8 @@ case object TimeOutError extends StatusError
 case object BadGatewayError extends StatusError
 case object UnhandledStatusError extends StatusError
 
-case class FindRecipientCodedErrorResponse(returnCode: Int, reasonCode: Int, message: String) extends DataRetrievalError {
-  def errorMessage: String = s"A FindRecipient error has occurred: returnCode:$returnCode, reasonCode:$reasonCode, message=$message"
+case class FindRecipientCodedErrorResponse(returnCode: Int, reasonCode: Int, message: String)
+    extends DataRetrievalError {
+  def errorMessage: String =
+    s"A FindRecipient error has occurred: returnCode:$returnCode, reasonCode:$reasonCode, message=$message"
 }

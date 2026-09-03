@@ -19,13 +19,22 @@ package models
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Reads}
 
-case class FindRecipientResponseDES(reasonCode: Int, returnCode: Int, instanceIdentifier: Cid, updateTimeStamp: Timestamp)
+case class FindRecipientResponseDES(
+  reasonCode: Int,
+  returnCode: Int,
+  instanceIdentifier: Cid,
+  updateTimeStamp: Timestamp
+)
 
 object FindRecipientResponseDES {
   implicit val reads: Reads[FindRecipientResponseDES] = (
-    (JsPath \ "Jfwk1012FindCheckPerNoninocallResponse" \ "Jfwk1012FindCheckPerNoninoExport" \ "OutWCbdParameters" \ "ReasonCode").read[Int] and
-    (JsPath \ "Jfwk1012FindCheckPerNoninocallResponse" \ "Jfwk1012FindCheckPerNoninoExport" \ "OutWCbdParameters" \ "ReturnCode").read[Int] and
-    (JsPath \ "Jfwk1012FindCheckPerNoninocallResponse" \ "Jfwk1012FindCheckPerNoninoExport" \ "OutItpr1Person" \ "InstanceIdentifier").read[Cid] and
-    (JsPath \ "Jfwk1012FindCheckPerNoninocallResponse" \ "Jfwk1012FindCheckPerNoninoExport" \ "OutItpr1Person" \ "UpdateTimestamp").read[Timestamp]
+    (JsPath \ "Jfwk1012FindCheckPerNoninocallResponse" \ "Jfwk1012FindCheckPerNoninoExport" \ "OutWCbdParameters" \ "ReasonCode")
+      .read[Int] and
+      (JsPath \ "Jfwk1012FindCheckPerNoninocallResponse" \ "Jfwk1012FindCheckPerNoninoExport" \ "OutWCbdParameters" \ "ReturnCode")
+        .read[Int] and
+      (JsPath \ "Jfwk1012FindCheckPerNoninocallResponse" \ "Jfwk1012FindCheckPerNoninoExport" \ "OutItpr1Person" \ "InstanceIdentifier")
+        .read[Cid] and
+      (JsPath \ "Jfwk1012FindCheckPerNoninocallResponse" \ "Jfwk1012FindCheckPerNoninoExport" \ "OutItpr1Person" \ "UpdateTimestamp")
+        .read[Timestamp]
   )(FindRecipientResponseDES.apply)
 }

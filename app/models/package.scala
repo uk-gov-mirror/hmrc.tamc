@@ -15,6 +15,6 @@
  */
 
 package object models {
-  type Cid = Long
+  type Cid       = Long
   type Timestamp = String
 }

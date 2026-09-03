@@ -22,4 +22,9 @@ object UserRecord {
   implicit val formats: OFormat[UserRecord] = Json.format[UserRecord]
 }
 
-case class UserRecord(cid: Cid, timestamp: Timestamp, has_allowance: Option[Boolean] = None, name: Option[CitizenName] = None)
+case class UserRecord(
+  cid: Cid,
+  timestamp: Timestamp,
+  has_allowance: Option[Boolean] = None,
+  name: Option[CitizenName] = None
+)

@@ -39,7 +39,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class EmailConnectorSpec
-  extends UnitSpec
+    extends UnitSpec
     with GuiceOneAppPerSuite
     with HttpClientV2Support
     with WireMockSupport
@@ -57,17 +57,17 @@ class EmailConnectorSpec
     .overrides(
       bind[HttpClientV2].toInstance(httpClientV2),
       bind[ApplicationConfig].toInstance(mockAppConfig)
-    ).build()
+    )
+    .build()
 
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
   val connector: EmailConnector = new EmailConnector(httpClientV2, mockAppConfig)
 
   val addressList: List[EmailAddress] = List(new EmailAddress("bob@test.com"))
-  val params: Map[String, String] = Map("a" -> "b")
-  val request: SendEmailRequest =
+  val params: Map[String, String]     = Map("a" -> "b")
+  val request: SendEmailRequest       =
     SendEmailRequest(addressList, "tamc_recipient_rejects_retro_yr", params, force = false)
-
 
   "sendEmail" should {
     "return Unit" when {
@@ -99,15 +99,15 @@ class EmailConnectorSpec
         )
 
         val response = await(connector.sendEmail(request))
-        response.isLeft shouldBe true
-        response.swap.toOption.get shouldBe a[UpstreamErrorResponse]
+        response.isLeft                       shouldBe true
+        response.swap.toOption.get            shouldBe a[UpstreamErrorResponse]
         response.swap.toOption.get.statusCode shouldBe 500
       }
     }
 
     "return Left BAD_GATEWAY" when {
       "call fails" in {
-        val mockHttp = mock[HttpClientV2]
+        val mockHttp                       = mock[HttpClientV2]
         val requestBuilder: RequestBuilder = mock[RequestBuilder]
 
         when(mockHttp.post(any[URL])(any[HeaderCarrier])).thenReturn(requestBuilder)
@@ -129,8 +129,8 @@ class EmailConnectorSpec
           .thenReturn(Future.failed(new HttpException("broken", IM_A_TEAPOT)))
 
         val response = await(connector.sendEmail(request))
-        response.isLeft shouldBe true
-        response.swap.toOption.get shouldBe a[UpstreamErrorResponse]
+        response.isLeft               shouldBe true
+        response.swap.toOption.get    shouldBe a[UpstreamErrorResponse]
         response.swap.toOption.get shouldEqual UpstreamErrorResponse("broken", BAD_GATEWAY)
       }
     }

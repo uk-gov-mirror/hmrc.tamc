@@ -20,7 +20,14 @@ import models.emailAddress.EmailAddress
 import play.api.libs.json.{Json, OFormat}
 
 object UpdateRelationshipNotificationRequest {
-  implicit val formats: OFormat[UpdateRelationshipNotificationRequest] = Json.format[UpdateRelationshipNotificationRequest]
+  implicit val formats: OFormat[UpdateRelationshipNotificationRequest] =
+    Json.format[UpdateRelationshipNotificationRequest]
 }
 
-case class UpdateRelationshipNotificationRequest(full_name: String, email: EmailAddress, role: String, welsh: Boolean, isRetrospective: Boolean)
+case class UpdateRelationshipNotificationRequest(
+  full_name: String,
+  email: EmailAddress,
+  role: String,
+  welsh: Boolean,
+  isRetrospective: Boolean
+)

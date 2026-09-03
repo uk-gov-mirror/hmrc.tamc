@@ -18,15 +18,22 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-
-case class FindRecipientRequestDes(surname: String, forename1: String, forename2: Option[String] = None, gender: Option[String] = None)
+case class FindRecipientRequestDes(
+  surname: String,
+  forename1: String,
+  forename2: Option[String] = None,
+  gender: Option[String] = None
+)
 
 object FindRecipientRequestDes {
 
   implicit val formats: OFormat[FindRecipientRequestDes] = Json.format[FindRecipientRequestDes]
 
-  def apply(findRecipientRequest: FindRecipientRequest): FindRecipientRequestDes = {
-    FindRecipientRequestDes(findRecipientRequest.lastName, findRecipientRequest.name, gender = Some(findRecipientRequest.gender.gender))
-  }
+  def apply(findRecipientRequest: FindRecipientRequest): FindRecipientRequestDes =
+    FindRecipientRequestDes(
+      findRecipientRequest.lastName,
+      findRecipientRequest.name,
+      gender = Some(findRecipientRequest.gender.gender)
+    )
 
 }

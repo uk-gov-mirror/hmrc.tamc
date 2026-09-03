@@ -19,10 +19,10 @@ package models
 object ApiType extends Enumeration {
   type ApiType = Value
 
-  val FindCitizen = Value
-  val FindRecipient = Value
-  val CheckRelationship = Value
+  val FindCitizen        = Value
+  val FindRecipient      = Value
+  val CheckRelationship  = Value
   val CreateRelationship = Value
-  val ListRelationship = Value
+  val ListRelationship   = Value
   val UpdateRelationship = Value
 }
